@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"liangminghaoangus/guaiguaizhu/scene"
 )
 
 type Scene interface {
@@ -13,6 +14,16 @@ type Scene interface {
 
 type Game struct {
 	scene Scene
+	w     int
+	h     int
+}
+
+func (g *Game) switch2Start() {
+	g.scene = scene.NewStart(g.w, g.h, func() {
+
+	}, func() {
+
+	})
 }
 
 func (g *Game) Update() error {
@@ -34,7 +45,11 @@ func (g *Game) Layout(width, height int) (int, int) {
 	return width, height
 }
 
-func NewGame() *Game {
-	g := &Game{}
+func NewGame(w, h int) *Game {
+	g := &Game{
+		w: w,
+		h: h,
+	}
+	g.switch2Start()
 	return g
 }
