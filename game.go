@@ -14,12 +14,16 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
-	g.scene.Update()
+	if g.scene != nil {
+		g.scene.Update()
+	}
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.scene.Draw(screen)
+	if g.scene != nil {
+		g.scene.Draw(screen)
+	}
 }
 
 func (g *Game) Layout(width, height int) (int, int) {
