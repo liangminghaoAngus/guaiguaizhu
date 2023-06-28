@@ -2,8 +2,11 @@ package scene
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/yohamta/furex/v2"
+	"image"
 	"image/color"
+	"liangminghaoangus/guaiguaizhu/config"
 	"os"
 )
 
@@ -47,6 +50,8 @@ func (s *StartScene) Draw(screen *ebiten.Image) {
 func (s *StartScene) setupUI() {
 	furex.Debug = true
 
+	f := config.GetSystemFont()
+
 	s.gameUI = &furex.View{
 		Width:        s.w,
 		Height:       s.h,
@@ -61,10 +66,17 @@ func (s *StartScene) setupUI() {
 		Width:  200,
 		Height: 80,
 		ID:     "",
-		Text:   "start game",
+		//Text:   "start game",
 		Handler: furex.NewHandler(furex.HandlerOpts{
-			Update:      nil,
-			Draw:        nil,
+			Update: nil,
+			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+				t := "开始游戏"
+				textBox := text.BoundString(f, t)
+				x, y := float64(frame.Min.X+frame.Dx()/2), float64(frame.Min.Y+frame.Dy()/2)
+				minW := textBox.Dx() / 2
+				minH := textBox.Dy() / 2
+				text.Draw(screen, t, f, int(x)-minW, int(y)+minH, color.White)
+			},
 			HandlePress: func(x, y int, t ebiten.TouchID) {},
 			HandleRelease: func(x, y int, isCancel bool) {
 				if isCancel {
@@ -80,11 +92,17 @@ func (s *StartScene) setupUI() {
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
 		Height: 80,
-		ID:     "",
-		Text:   "load game",
+		//Text:   "load game",
 		Handler: furex.NewHandler(furex.HandlerOpts{
-			Update:      nil,
-			Draw:        nil,
+			Update: nil,
+			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+				t := "加载存档"
+				textBox := text.BoundString(f, t)
+				x, y := float64(frame.Min.X+frame.Dx()/2), float64(frame.Min.Y+frame.Dy()/2)
+				minW := textBox.Dx() / 2
+				minH := textBox.Dy() / 2
+				text.Draw(screen, t, f, int(x)-minW, int(y)+minH, color.White)
+			},
 			HandlePress: nil,
 			HandleRelease: func(x, y int, isCancel bool) {
 				if isCancel {
@@ -99,18 +117,30 @@ func (s *StartScene) setupUI() {
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
 		Height: 80,
-		ID:     "",
-		Text:   "exit game",
-		Handler: furex.NewHandler(furex.HandlerOpts{
-			Update:      nil,
-			Draw:        nil,
-			HandlePress: nil,
-			HandleRelease: func(x, y int, isCancel bool) {
-				if isCancel {
-					return
-				}
-				os.Exit(0)
-			},
-		}),
+		//Text:   "exit game",
+		Handler: func() furex.Handler {
+			//hover := false
+			//buttonColor := color.NRGBA{R: 170, G: 170, B: 180, A: 255}
+			//buttonHover := color.NRGBA{R: 130, G: 130, B: 150, A: 255}
+			//buttonPressed := color.NRGBA{R: 100, G: 100, B: 120, A: 255}
+			return furex.NewHandler(furex.HandlerOpts{
+				Update: nil,
+				Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+					t := "退出游戏"
+					textBox := text.BoundString(f, t)
+					x, y := float64(frame.Min.X+frame.Dx()/2), float64(frame.Min.Y+frame.Dy()/2)
+					minW := textBox.Dx() / 2
+					minH := textBox.Dy() / 2
+					text.Draw(screen, t, f, int(x)-minW, int(y)+minH, color.White)
+				},
+				HandlePress: func(x, y int, t ebiten.TouchID) {},
+				HandleRelease: func(x, y int, isCancel bool) {
+					if isCancel {
+						return
+					}
+					os.Exit(0)
+				},
+			})
+		}(),
 	})
 }
