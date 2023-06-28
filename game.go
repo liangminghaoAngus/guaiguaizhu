@@ -19,11 +19,10 @@ type Game struct {
 }
 
 func (g *Game) switch2Start() {
-	g.scene = scene.NewStart(g.w, g.h, func() {
+	newGameFunc := func() {}
+	loadGameFunc := func() {}
 
-	}, func() {
-
-	})
+	g.scene = scene.NewStart(g.w, g.h, newGameFunc, loadGameFunc)
 }
 
 func (g *Game) Update() error {
