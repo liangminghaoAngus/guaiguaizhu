@@ -12,7 +12,10 @@ import (
 func main() {
 
 	config.Init("dev")
-	ebiten.SetWindowSize(640, 320)
+	gconf := config.GetConfig()
+	ebiten.SetWindowSize(gconf.ScreenWidth, gconf.ScreenHeight)
+	//ebiten.SetWindowIcon()
+	ebiten.SetWindowTitle(gconf.GameName)
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	err := ebiten.RunGame(NewGame())
