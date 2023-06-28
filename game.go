@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type Scene interface {
@@ -24,6 +26,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.scene != nil {
 		g.scene.Draw(screen)
 	}
+	debugStr := fmt.Sprintf("FPS:%0.2f \nTPS:%0.2f", ebiten.ActualFPS(), ebiten.ActualTPS())
+	ebitenutil.DebugPrint(screen, debugStr)
 }
 
 func (g *Game) Layout(width, height int) (int, int) {
