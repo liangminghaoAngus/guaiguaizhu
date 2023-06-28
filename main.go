@@ -18,7 +18,7 @@ func main() {
 	ebiten.SetWindowTitle(gconf.GameName)
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	err := ebiten.RunGame(NewGame())
+	err := ebiten.RunGame(NewGame(gconf.ScreenWidth, gconf.ScreenHeight))
 	if err != nil {
 		log.Fatal(err)
 	}
