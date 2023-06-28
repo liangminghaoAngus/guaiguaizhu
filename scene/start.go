@@ -2,7 +2,9 @@ package scene
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/yohamta/furex/v2"
+	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/scene/widgets"
@@ -66,9 +68,34 @@ func (s *StartScene) setupUI() {
 		Height: 80,
 		Text:   "开始游戏",
 		Handler: &widgets.Button{FontFace: f, OnClick: func(attrs map[string]string) {
-			println("select player")
+			//println("select player")
+			if dialog, ok := s.gameUI.GetByID("new-game-pop"); ok {
+				dialog.Display = furex.DisplayFlex
+				dialog.SetHidden(!dialog.Hidden)
+			}
 		}},
 	})
+
+	// new game select player window
+	newGamePop := &furex.View{
+		ID:       "new-game-pop",
+		Width:    s.w,
+		Height:   s.h / 2,
+		Position: furex.PositionAbsolute,
+		Left:     0,
+		Top:      s.h / 4,
+		Attrs:    nil,
+		Hidden:   true,
+		Display:  furex.DisplayNone,
+		Handler: furex.NewHandler(furex.HandlerOpts{
+			Update: nil,
+			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+				vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(s.w), float32(s.h/2), color.White, false)
+			},
+			HandlePress:   nil,
+			HandleRelease: nil,
+		}),
+	}
 
 	// load game button
 	s.gameUI.AddChild(&furex.View{
@@ -76,9 +103,35 @@ func (s *StartScene) setupUI() {
 		Height: 80,
 		Text:   "加载存档",
 		Handler: &widgets.Button{FontFace: f, OnClick: func(attrs map[string]string) {
-			println("select load")
+			//println("select load")
+			if dialog, ok := s.gameUI.GetByID("load-game-pop"); ok {
+				dialog.Display = furex.DisplayFlex
+				dialog.SetHidden(!dialog.Hidden)
+			}
 		}},
 	})
+
+	// load game select player window
+	LoadGamePop := &furex.View{
+		ID:       "load-game-pop",
+		Width:    s.w,
+		Height:   s.h / 2,
+		Position: furex.PositionAbsolute,
+		Left:     0,
+		Top:      s.h / 4,
+		Attrs:    nil,
+		Hidden:   true,
+		Display:  furex.DisplayNone,
+		Handler: furex.NewHandler(furex.HandlerOpts{
+			Update: nil,
+			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+				vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(s.w), float32(s.h/2), color.White, false)
+			},
+			HandlePress:   nil,
+			HandleRelease: nil,
+		}),
+	}
+
 	// exit game button
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
@@ -88,4 +141,8 @@ func (s *StartScene) setupUI() {
 			os.Exit(0)
 		}},
 	})
+
+	// dialog window
+	s.gameUI.AddChild(newGamePop)
+	s.gameUI.AddChild(LoadGamePop)
 }
