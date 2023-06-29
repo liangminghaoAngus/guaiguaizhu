@@ -15,6 +15,7 @@ type Button struct {
 	Color    color.Color
 	attrs    map[string]string
 	OnClick  func(attrs map[string]string)
+	OnEnter  func()
 	FontFace font.Face
 
 	mouseover bool
@@ -35,6 +36,9 @@ func (b *Button) HandleRelease(x, y int, isCancel bool) {
 }
 
 func (b *Button) HandleMouseEnter(x, y int) bool {
+	if b.OnEnter != nil {
+		b.OnEnter()
+	}
 	b.mouseover = true
 	return true
 }

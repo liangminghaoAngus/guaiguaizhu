@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/scene"
 )
 
@@ -19,7 +20,9 @@ type Game struct {
 }
 
 func (g *Game) switch2Start() {
-	newGameFunc := func() {}
+	newGameFunc := func(raceInt enums.Race) {
+
+	}
 	loadGameFunc := func() {}
 
 	g.scene = scene.NewStart(g.w, g.h, newGameFunc, loadGameFunc)

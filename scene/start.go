@@ -3,7 +3,9 @@ package scene
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/yohamta/furex/v2"
+	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
@@ -19,11 +21,11 @@ type StartScene struct {
 
 	gameUI *furex.View
 
-	newGameCallBack  func()
+	newGameCallBack  func(race enums.Race)
 	loadGameCallBack func()
 }
 
-func NewStart(w, h int, newGame, loadGame func()) *StartScene {
+func NewStart(w, h int, newGame func(race enums.Race), loadGame func()) *StartScene {
 	s := &StartScene{
 		w:                w,
 		h:                h,
@@ -44,7 +46,6 @@ func (s *StartScene) Update() {
 }
 
 func (s *StartScene) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{0x3d, 0x55, 0x0c, 0xff})
 	s.gameUI.Draw(screen)
 
 }
@@ -101,7 +102,7 @@ func (s *StartScene) setupUI() {
 	newGamePop := &furex.View{
 		ID:         "new-game-pop",
 		Width:      s.w,
-		Height:     s.h / 2,
+		Height:     s.h * 2 / 3,
 		Position:   furex.PositionAbsolute,
 		Left:       0,
 		Top:        s.h / 4,
@@ -175,6 +176,26 @@ func (s *StartScene) newGamePopViews() []*furex.View {
 		Display:     furex.DisplayFlex,
 		Hidden:      false,
 	}
+	bottomPos := 0
+	bottomBoxText := "ceshiwenben"
+	// bottom text center
+	bottomText := &furex.View{
+		WidthInPct: 100,
+		Height:     100,
+		Left:       s.w / 2,
+		Position:   furex.PositionAbsolute,
+		Bottom:     &bottomPos,
+		Handler: furex.NewHandler(furex.HandlerOpts{
+			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
+				font24 := config.GetSystemFontSize(24)
+				x, y := float64(frame.Min.X+frame.Dx()/2), float64(frame.Min.Y+frame.Dy()/2)
+				textBox := text.BoundString(font24, bottomBoxText)
+				minW := textBox.Dx() / 2
+				minH := textBox.Dy() / 2
+				text.Draw(screen, bottomBoxText, font24, int(x)-minW, int(y)+minH, color.White)
+			},
+		}),
+	}
 
 	q := make([]*furex.View, 0)
 	cardWidth := math.Ceil(float64(s.w)*0.66) / 3
@@ -200,14 +221,22 @@ func (s *StartScene) newGamePopViews() []*furex.View {
 		item := val
 		boxCenter.AddChild(&furex.View{
 			Width:       int(math.Ceil(cardWidth)),
-			HeightInPct: 80,
+			HeightInPct: 76,
 			ID:          fmt.Sprintf("race_%d", item.race),
 			Text:        item.name,
-			Handler: &widgets.Button{FontFace: config.GetSystemFont(), OnClick: func(attr map[string]string) {
-				println(item.name)
-			}},
+			Handler: &widgets.Button{
+				FontFace: config.GetSystemFont(),
+				OnClick: func(attr map[string]string) {
+					if s.newGameCallBack != nil {
+						s.newGameCallBack(item.race)
+					}
+				},
+				OnEnter: func() {
+					bottomBoxText = item.intro
+				},
+			},
 		})
 	}
-	q = append(q, boxCenter)
+	q = append(q, boxCenter, bottomText)
 	return q
 }
