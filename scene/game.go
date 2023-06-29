@@ -7,6 +7,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"liangminghaoangus/guaiguaizhu/system"
 )
 
 type System interface {
@@ -31,13 +32,34 @@ func NewGame(raceInt enums.Race) *Game {
 }
 
 func (g *Game) initGame() {
+	render := system.NewRender()
+	// todo append system
+	g.systems = []System{
+		render,
+	}
+
+	g.drawables = []Drawable{
+		render,
+	}
 
 	g.world = g.createWorld()
+
 }
 
 func (g *Game) createWorld() donburi.World {
 	world := donburi.NewWorld()
 	world.Entry(world.Create(component.Game))
+
+	// create base layer
+	//levelEntry := world.Entry(
+	//	world.Create(transform.Transform, component.Sprite),
+	//)
+	//
+	//component.Sprite.SetValue(levelEntry, component.SpriteData{
+	//	Image: levelAsset.Background,
+	//	Layer: component.SpriteLayerBackground,
+	//	Pivot: component.SpritePivotTopLeft,
+	//})
 
 	return world
 }
@@ -61,9 +83,8 @@ func (g *Game) Update() {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-
-	//text.Draw(screen, "m110's Airplanes", assets.NarrowFont, t.screenWidth/4, 100, color.White)
-	//text.Draw(screen, "Player 1: WASD + Space", assets.NarrowFont, t.screenWidth/6, 250, color.White)
-	//text.Draw(screen, "Player 2: Arrows + Enter", assets.NarrowFont, t.screenWidth/6, 350, color.White)
-	//text.Draw(screen, "Press space to start", assets.NarrowFont, t.screenWidth/5, 500, color.White)
+	screen.Clear()
+	for _, s := range g.drawables {
+		s.Draw(g.world, screen)
+	}
 }

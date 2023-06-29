@@ -5,6 +5,13 @@ import (
 	"github.com/yohamta/donburi"
 )
 
+type SpritePivot int
+
+const (
+	SpritePivotCenter SpritePivot = iota
+	SpritePivotTopLeft
+)
+
 type ColorOverride struct {
 	R, G, B, A float64
 }
@@ -12,18 +19,20 @@ type ColorOverride struct {
 type SpriteData struct {
 	Image     *ebiten.Image
 	ColorOver ColorOverride
-	hidden    bool
+	HiddenED  bool
+	Layer     int
+	Pivot     SpritePivot
 	// The original rotation of the sprite
 	// "Facing right" is considered 0 degrees
 	OriginalRotation float64
 }
 
 func (s *SpriteData) Show() {
-	s.hidden = false
+	s.HiddenED = false
 }
 
 func (s *SpriteData) Hidden() {
-	s.hidden = true
+	s.HiddenED = true
 }
 
 var Sprite = donburi.NewComponentType[SpriteData](SpriteData{})
