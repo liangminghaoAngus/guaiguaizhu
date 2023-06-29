@@ -21,7 +21,7 @@ type Game struct {
 
 func (g *Game) switch2Start() {
 	newGameFunc := func(raceInt enums.Race) {
-
+		g.scene = scene.NewGame(raceInt)
 	}
 	loadGameFunc := func() {}
 

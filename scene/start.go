@@ -38,16 +38,10 @@ func NewStart(w, h int, newGame func(race enums.Race), loadGame func()) *StartSc
 
 func (s *StartScene) Update() {
 	s.gameUI.Update()
-
-	//if ebiten.IsKeyPressed(ebiten.KeyEnter) || ebiten.IsKeyPressed(ebiten.KeySpace) {
-	//	s.newGameCallBack()
-	//	return
-	//}
 }
 
 func (s *StartScene) Draw(screen *ebiten.Image) {
 	s.gameUI.Draw(screen)
-
 }
 
 func (s *StartScene) setupUI() {
