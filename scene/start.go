@@ -1,11 +1,14 @@
 package scene
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/furex/v2"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/config"
+	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/scene/widgets"
+	"math"
 	"os"
 )
 
@@ -77,19 +80,6 @@ func (s *StartScene) setupUI() {
 		}},
 	})
 
-	// new game select player window
-	newGamePop := &furex.View{
-		ID:       "new-game-pop",
-		Width:    s.w,
-		Height:   s.h / 2,
-		Position: furex.PositionAbsolute,
-		Left:     0,
-		Top:      s.h / 4,
-		Attrs:    nil,
-		Hidden:   true,
-		Display:  furex.DisplayNone,
-	}
-
 	// right-top close button
 	rightPos := 4
 	rightTopCloseButton := &furex.View{
@@ -106,6 +96,24 @@ func (s *StartScene) setupUI() {
 			}
 		}},
 	}
+
+	// new game select player window
+	newGamePop := &furex.View{
+		ID:         "new-game-pop",
+		Width:      s.w,
+		Height:     s.h / 2,
+		Position:   furex.PositionAbsolute,
+		Left:       0,
+		Top:        s.h / 4,
+		Attrs:      nil,
+		Hidden:     true,
+		Display:    furex.DisplayNone,
+		AlignItems: furex.AlignItemCenter,
+		Justify:    furex.JustifyCenter,
+	}
+
+	// new game select view and text
+	newGamePop.AddChild(s.newGamePopViews()...)
 
 	newGamePop.AddChild(rightTopCloseButton)
 	// load game button
@@ -150,4 +158,56 @@ func (s *StartScene) setupUI() {
 	// dialog window
 	s.gameUI.AddChild(newGamePop)
 	s.gameUI.AddChild(LoadGamePop)
+}
+
+type raceInfoSelect struct {
+	race  enums.Race
+	name  string
+	intro string
+}
+
+func (s *StartScene) newGamePopViews() []*furex.View {
+	boxCenter := &furex.View{
+		WidthInPct:  80,
+		HeightInPct: 100,
+		Justify:     furex.JustifySpaceBetween,
+		AlignItems:  furex.AlignItemStart,
+		Display:     furex.DisplayFlex,
+		Hidden:      false,
+	}
+
+	q := make([]*furex.View, 0)
+	cardWidth := math.Ceil(float64(s.w)*0.66) / 3
+	// three race card select
+	l := []raceInfoSelect{
+		{
+			race:  enums.RaceGod,
+			name:  enums.GetRaceName(enums.RaceGod),
+			intro: "ff",
+		},
+		{
+			race:  enums.RaceHuman,
+			name:  enums.GetRaceName(enums.RaceHuman),
+			intro: "fff",
+		},
+		{
+			race:  enums.RaceDevil,
+			name:  enums.GetRaceName(enums.RaceDevil),
+			intro: "ffff",
+		},
+	}
+	for _, val := range l {
+		item := val
+		boxCenter.AddChild(&furex.View{
+			Width:       int(math.Ceil(cardWidth)),
+			HeightInPct: 80,
+			ID:          fmt.Sprintf("race_%d", item.race),
+			Text:        item.name,
+			Handler: &widgets.Button{FontFace: config.GetSystemFont(), OnClick: func(attr map[string]string) {
+				println(item.name)
+			}},
+		})
+	}
+	q = append(q, boxCenter)
+	return q
 }

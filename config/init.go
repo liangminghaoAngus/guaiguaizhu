@@ -10,6 +10,7 @@ import (
 )
 
 var config *Config
+var systemFontRaw *opentype.Font
 var systemFont font.Face
 
 func GetConfig() *Config {
@@ -18,6 +19,19 @@ func GetConfig() *Config {
 
 func GetSystemFont() font.Face {
 	return systemFont
+}
+
+func GetSystemFontSize(size float64) font.Face {
+	if systemFontRaw != nil {
+		if systemFont, err := opentype.NewFace(systemFontRaw, &opentype.FaceOptions{
+			Size:    size,
+			DPI:     72,
+			Hinting: font.HintingFull, // Use quantization to save glyph cache images.
+		}); err == nil {
+			return systemFont
+		}
+	}
+	return nil
 }
 
 type Config struct {
@@ -51,6 +65,7 @@ func Init(fileName string) {
 	if err != nil {
 		panic(err)
 	}
+	systemFontRaw = tt
 	systemFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
 		Size:    32,
 		DPI:     72,
