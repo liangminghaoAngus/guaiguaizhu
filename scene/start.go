@@ -2,9 +2,7 @@ package scene
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/yohamta/furex/v2"
-	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/scene/widgets"
@@ -62,6 +60,8 @@ func (s *StartScene) setupUI() {
 		AlignContent: furex.AlignContentCenter,
 		Wrap:         furex.Wrap,
 	}
+
+	closePopID := ""
 	// start game button
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
@@ -71,7 +71,8 @@ func (s *StartScene) setupUI() {
 			//println("select player")
 			if dialog, ok := s.gameUI.GetByID("new-game-pop"); ok {
 				dialog.Display = furex.DisplayFlex
-				dialog.SetHidden(!dialog.Hidden)
+				dialog.SetHidden(false)
+				closePopID = "new-game-pop"
 			}
 		}},
 	})
@@ -87,16 +88,26 @@ func (s *StartScene) setupUI() {
 		Attrs:    nil,
 		Hidden:   true,
 		Display:  furex.DisplayNone,
-		Handler: furex.NewHandler(furex.HandlerOpts{
-			Update: nil,
-			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
-				vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(s.w), float32(s.h/2), color.White, false)
-			},
-			HandlePress:   nil,
-			HandleRelease: nil,
-		}),
 	}
 
+	// right-top close button
+	rightPos := 4
+	rightTopCloseButton := &furex.View{
+		Width:    36,
+		Height:   36,
+		Position: furex.PositionAbsolute,
+		Right:    &rightPos,
+		Top:      4,
+		Text:     "×",
+		Handler: &widgets.Button{FontFace: f, OnClick: func(attrs map[string]string) {
+			if dialog, ok := s.gameUI.GetByID(closePopID); ok {
+				dialog.Display = furex.DisplayNone
+				dialog.SetHidden(true)
+			}
+		}},
+	}
+
+	newGamePop.AddChild(rightTopCloseButton)
 	// load game button
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
@@ -105,6 +116,7 @@ func (s *StartScene) setupUI() {
 		Handler: &widgets.Button{FontFace: f, OnClick: func(attrs map[string]string) {
 			//println("select load")
 			if dialog, ok := s.gameUI.GetByID("load-game-pop"); ok {
+				closePopID = "load-game-pop"
 				dialog.Display = furex.DisplayFlex
 				dialog.SetHidden(!dialog.Hidden)
 			}
@@ -122,16 +134,9 @@ func (s *StartScene) setupUI() {
 		Attrs:    nil,
 		Hidden:   true,
 		Display:  furex.DisplayNone,
-		Handler: furex.NewHandler(furex.HandlerOpts{
-			Update: nil,
-			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
-				vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(s.w), float32(s.h/2), color.White, false)
-			},
-			HandlePress:   nil,
-			HandleRelease: nil,
-		}),
 	}
 
+	LoadGamePop.AddChild(rightTopCloseButton)
 	// exit game button
 	s.gameUI.AddChild(&furex.View{
 		Width:  200,
