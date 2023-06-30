@@ -1,6 +1,7 @@
 package main
 
 import (
+	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/config"
 	"log"
 	"math/rand"
@@ -12,6 +13,7 @@ import (
 func main() {
 
 	config.Init("dev")
+	assetsImage.Init()
 	gconf := config.GetConfig()
 	ebiten.SetWindowSize(gconf.ScreenWidth, gconf.ScreenHeight)
 	//ebiten.SetWindowIcon()

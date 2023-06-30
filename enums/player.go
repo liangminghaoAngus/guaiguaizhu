@@ -20,3 +20,16 @@ func GetRaceName(raceInt Race) string {
 	}
 	return res
 }
+
+func GetRaceText(raceInt Race) string {
+	res := ""
+	switch raceInt {
+	case RaceGod:
+		res = RaceGodText
+	case RaceHuman:
+		res = RaceHumanText
+	case RaceDevil:
+		res = RaceDevilText
+	}
+	return res
+}

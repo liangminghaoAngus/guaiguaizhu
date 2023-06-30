@@ -1,12 +1,14 @@
 package scene
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/yohamta/furex/v2"
 	"image"
 	"image/color"
+	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/scene/widgets"
@@ -170,23 +172,23 @@ func (s *StartScene) newGamePopViews() []*furex.View {
 		Display:     furex.DisplayFlex,
 		Hidden:      false,
 	}
-	bottomPos := 0
-	bottomBoxText := "ceshiwenben"
+	bottomPos := 60
+	bottomBoxText := ""
 	// bottom text center
 	bottomText := &furex.View{
 		WidthInPct: 100,
-		Height:     100,
+		Height:     50,
 		Left:       s.w / 2,
 		Position:   furex.PositionAbsolute,
 		Bottom:     &bottomPos,
 		Handler: furex.NewHandler(furex.HandlerOpts{
 			Draw: func(screen *ebiten.Image, frame image.Rectangle, v *furex.View) {
-				font24 := config.GetSystemFontSize(24)
+				font12 := config.GetSystemFontSize(18)
 				x, y := float64(frame.Min.X+frame.Dx()/2), float64(frame.Min.Y+frame.Dy()/2)
-				textBox := text.BoundString(font24, bottomBoxText)
+				textBox := text.BoundString(font12, bottomBoxText)
 				minW := textBox.Dx() / 2
 				minH := textBox.Dy() / 2
-				text.Draw(screen, bottomBoxText, font24, int(x)-minW, int(y)+minH, color.White)
+				text.Draw(screen, bottomBoxText, font12, int(x)-minW, int(y)+minH, color.White)
 			},
 		}),
 	}
@@ -198,28 +200,40 @@ func (s *StartScene) newGamePopViews() []*furex.View {
 		{
 			race:  enums.RaceGod,
 			name:  enums.GetRaceName(enums.RaceGod),
-			intro: "ff",
+			intro: enums.GetRaceText(enums.RaceGod),
 		},
 		{
 			race:  enums.RaceHuman,
 			name:  enums.GetRaceName(enums.RaceHuman),
-			intro: "fff",
+			intro: enums.GetRaceText(enums.RaceHuman),
 		},
 		{
 			race:  enums.RaceDevil,
 			name:  enums.GetRaceName(enums.RaceDevil),
-			intro: "ffff",
+			intro: enums.GetRaceText(enums.RaceDevil),
 		},
 	}
 	for _, val := range l {
 		item := val
+		img, _, e := image.Decode(bytes.NewReader(assetsImage.RaceImage[item.race]))
+		if e != nil {
+			continue
+		}
+		imgHover, _, e := image.Decode(bytes.NewReader(assetsImage.RaceHoverImage[item.race]))
+		if e != nil {
+			continue
+		}
+		imageBg := ebiten.NewImageFromImage(img)
+		imageBgHover := ebiten.NewImageFromImage(imgHover)
 		boxCenter.AddChild(&furex.View{
 			Width:       int(math.Ceil(cardWidth)),
 			HeightInPct: 76,
 			ID:          fmt.Sprintf("race_%d", item.race),
 			Text:        item.name,
 			Handler: &widgets.Button{
-				FontFace: config.GetSystemFont(),
+				Image:      imageBg,
+				ImageHover: imageBgHover,
+				FontFace:   config.GetSystemFont(),
 				OnClick: func(attr map[string]string) {
 					if s.newGameCallBack != nil {
 						s.newGameCallBack(item.race)

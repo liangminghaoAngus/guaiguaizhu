@@ -12,11 +12,13 @@ import (
 )
 
 type Button struct {
-	Color    color.Color
-	attrs    map[string]string
-	OnClick  func(attrs map[string]string)
-	OnEnter  func()
-	FontFace font.Face
+	Color      color.Color
+	Image      *ebiten.Image
+	ImageHover *ebiten.Image
+	attrs      map[string]string
+	OnClick    func(attrs map[string]string)
+	OnEnter    func()
+	FontFace   font.Face
 
 	mouseover bool
 	pressed   bool
@@ -62,15 +64,26 @@ func (b *Button) Draw(screen *ebiten.Image, frame image.Rectangle, view *furex.V
 	buttonColor := color.NRGBA{R: 170, G: 170, B: 180, A: 255}
 	buttonHover := color.NRGBA{R: 130, G: 130, B: 150, A: 255}
 	buttonPressed := color.NRGBA{R: 100, G: 100, B: 120, A: 255}
-
 	// vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(view.Width), float32(view.Height), buttonColor, false)
 
 	if b.pressed {
 		vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(view.Width), float32(view.Height), buttonPressed, false)
 	} else if b.mouseover {
 		vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(view.Width), float32(view.Height), buttonHover, false)
+		if b.Image != nil {
+			op := ebiten.DrawImageOptions{}
+			op.GeoM.Scale(1.8, 1.8)
+			op.GeoM.Translate(float64(frame.Min.X), float64(frame.Min.Y))
+			screen.DrawImage(b.ImageHover, &op)
+		}
 	} else {
 		vector.DrawFilledRect(screen, float32(frame.Min.X), float32(frame.Min.Y), float32(view.Width), float32(view.Height), buttonColor, false)
+		if b.Image != nil {
+			op := ebiten.DrawImageOptions{}
+			op.GeoM.Scale(1.8, 1.8)
+			op.GeoM.Translate(float64(frame.Min.X), float64(frame.Min.Y))
+			screen.DrawImage(b.Image, &op)
+		}
 	}
 
 	if b.Color == nil {
