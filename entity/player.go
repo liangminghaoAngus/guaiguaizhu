@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/transform"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
 )
@@ -16,12 +17,14 @@ import (
 //	}
 
 var PlayerEntity = []donburi.IComponentType{
+	transform.Transform,
 	component.Health,
 	component.Race,
 	component.Level,
 	component.Movement,
 	component.Position,
-	component.Sprite,
+	//component.Sprite,
+	component.Control,
 }
 
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
@@ -36,7 +39,8 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	component.Level.SetValue(player, component.NewLevelData())
 	component.Movement.SetValue(player, component.NewMovementData())
 	component.Position.SetValue(player, component.NewPositionData())
-	component.Sprite.SetValue(player, component.SpriteData{})
+	//component.Sprite.SetValue(player, component.SpriteData{})
+	component.Control.SetValue(player, component.NewPlayerControl())
 
 	return nil
 }

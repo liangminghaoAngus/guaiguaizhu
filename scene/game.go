@@ -6,6 +6,7 @@ import (
 	"github.com/yohamta/donburi"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
+	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/system"
 )
@@ -27,30 +28,34 @@ type Game struct {
 func NewGame(raceInt enums.Race) *Game {
 	g := &Game{}
 
-	g.initGame()
+	g.initGame(raceInt)
 	return g
 }
 
-func (g *Game) initGame() {
+func (g *Game) initGame(raceInt enums.Race) {
 	render := system.NewRender()
 	// todo append system
 	g.systems = []System{
 		render,
+		system.NewControl(),
 	}
 
 	g.drawables = []Drawable{
 		render,
 	}
 
-	g.world = g.createWorld()
+	g.world = g.createWorld(raceInt)
 
 }
 
-func (g *Game) createWorld() donburi.World {
+func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
 	world.Entry(world.Create(component.Game))
+	entity.NewPlayer(world, raceInt)
 
 	// create base layer
+	//playerEntity := entity.NewPlayer(world, raceInt)
+
 	//levelEntry := world.Entry(
 	//	world.Create(transform.Transform, component.Sprite),
 	//)
