@@ -1,14 +1,15 @@
 package scene
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/yohamta/donburi"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/system"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/yohamta/donburi"
 )
 
 type System interface {
@@ -52,6 +53,8 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
 	world.Entry(world.Create(component.Game))
 	entity.NewPlayer(world, raceInt)
+	// todo
+	entity.NewRookieMap(world)
 
 	// create base layer
 	//playerEntity := entity.NewPlayer(world, raceInt)
