@@ -7,3 +7,9 @@ type MovementData struct {
 }
 
 var Movement = donburi.NewComponentType[MovementData](MovementData{})
+
+func NewMovementData() MovementData {
+	return MovementData{
+		speed: 0.8,
+	}
+}

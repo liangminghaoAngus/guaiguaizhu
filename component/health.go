@@ -17,3 +17,12 @@ type HealthData struct {
 var Health = donburi.NewComponentType[HealthData](HealthData{
 	DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
 })
+
+func NewPlayerHealthData() HealthData {
+	return HealthData{
+		100,
+		100,
+		false,
+		engine.NewTimer(time.Millisecond * 100),
+	}
+}
