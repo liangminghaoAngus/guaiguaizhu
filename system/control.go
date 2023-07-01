@@ -2,13 +2,13 @@ package system
 
 import (
 	"fmt"
+	"liangminghaoangus/guaiguaizhu/component"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
-	"liangminghaoangus/guaiguaizhu/component"
-	"sync"
 )
 
 type Control struct {
@@ -20,8 +20,6 @@ func NewControl() *Control {
 		query: query.NewQuery(filter.Contains(transform.Transform, component.Position, component.Control, component.Movement)),
 	}
 }
-
-var once sync.Once
 
 func (m *Control) Update(w donburi.World) {
 	m.query.Each(w, func(entry *donburi.Entry) {

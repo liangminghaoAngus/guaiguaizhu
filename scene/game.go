@@ -1,6 +1,9 @@
 package scene
 
 import (
+	"bytes"
+	"io"
+	"liangminghaoangus/guaiguaizhu/assets/sound"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/entity"
@@ -8,6 +11,8 @@ import (
 	"liangminghaoangus/guaiguaizhu/system"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yohamta/donburi"
 )
@@ -39,6 +44,7 @@ func (g *Game) initGame(raceInt enums.Race) {
 	g.systems = []System{
 		render,
 		system.NewControl(),
+		system.NewSound(),
 	}
 
 	g.drawables = []Drawable{
@@ -52,6 +58,28 @@ func (g *Game) initGame(raceInt enums.Race) {
 func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
 	world.Entry(world.Create(component.Game))
+
+	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
+
+	// todo need to do switch music
+	s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
+	if err != nil {
+		println("music err")
+	}
+	audioContext := audio.NewContext(11025)
+	m, err := io.ReadAll(s)
+	if err != nil {
+		println("music err")
+	}
+	p := audioContext.NewPlayerFromBytes(m)
+	component.Sound.SetValue(soundEntity, component.SoundData{
+		Loop:         true,
+		AudioContext: audioContext,
+		AudioPlayer:  p,
+		Mp3Byte:      sound.Intro,
+		Volume:       10,
+	})
+
 	entity.NewPlayer(world, raceInt)
 	// todo
 	entity.NewRookieMap(world)
@@ -74,8 +102,10 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 
 func (g *Game) Update() {
 	gameData := component.MustFindGame(g.world)
+	bgSound := component.FindBgSound(g.world)
 	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		gameData.Pause = !gameData.Pause
+		bgSound.Paused = !bgSound.Paused
 	}
 
 	if gameData.Pause {
