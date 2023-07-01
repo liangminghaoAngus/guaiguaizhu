@@ -20,7 +20,8 @@ var sceneImageDir embed.FS
 
 //go:embed human_stand
 var humanStandImageDir embed.FS
-var HumanStandImges = make([]*ebiten.Image, 0)
+var HumanStandImgs = make([]*ebiten.Image, 0)
+var HumanStandImgsLeft = make([]*ebiten.Image, 0)
 
 var RaceImage = map[enums.Race][]byte{
 	enums.RaceGod:   nil,
@@ -100,13 +101,26 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	HumanStandImges = make([]*ebiten.Image, len(humanStandDirEntry))
+	HumanStandImgs = make([]*ebiten.Image, len(humanStandDirEntry))
+	HumanStandImgsLeft = make([]*ebiten.Image, len(humanStandDirEntry))
 	for index, entry := range humanStandDirEntry {
 		imageName := entry.Name()
 		filePath := path.Join("human_stand", imageName)
 		raw, _ := humanStandImageDir.ReadFile(filePath)
 		i, _, _ := image.Decode(bytes.NewReader(raw))
 
-		HumanStandImges[index] = ebiten.NewImageFromImage(i)
+		b := i.Bounds()
+		newImage := image.NewRGBA(b)
+		for x := b.Min.X; x < b.Max.X; x++ {
+			for y := b.Min.Y; y < b.Max.Y; y++ {
+				newPixel := i.At((b.Max.X-1)-x, y)
+				newImage.Set(x, y, newPixel)
+			}
+		}
+
+		// 生成向左的图片
+		HumanStandImgsLeft[index] = ebiten.NewImageFromImage(newImage)
+
+		HumanStandImgs[index] = ebiten.NewImageFromImage(i)
 	}
 }

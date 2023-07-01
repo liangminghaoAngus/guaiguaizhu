@@ -29,6 +29,25 @@ func NewRender() *Render {
 
 func (r *Render) Update(w donburi.World) {
 
+	// 修改 sprite 渲染
+	r.query.Each(w, func(entry *donburi.Entry) {
+		// 判断是否实体存在 spriteStand 贴图和 position 数据
+		if entry.HasComponent(component.SpriteStand) {
+			// position := component.Position.Get(entry)
+			standImages := component.SpriteStand.Get(entry)
+			if standImages.Disabled {
+				return
+			}
+			index := (standImages.Count / 5) % 8
+			if index > len(standImages.Images)-1 {
+				standImages.Count = 0
+				index = 0
+			}
+			standImages.Count++
+		}
+
+	})
+
 }
 
 func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
@@ -45,17 +64,17 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				return
 			}
 			index := (standImages.Count / 5) % 8
-			if index > len(standImages.Images)-1 {
-				standImages.Count = 0
-				index = 0
+			// 判断是否需要翻转贴图方向
+			targetImage := &ebiten.Image{}
+			if standImages.IsDirectionRight {
+				targetImage = standImages.Images[index]
+			} else {
+				targetImage = standImages.ImagesRight[index]
 			}
 
-			perImage := standImages.Images[index]
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
-
-			screen.DrawImage(perImage, op)
-			standImages.Count++
+			screen.DrawImage(targetImage, op)
 		}
 
 	})

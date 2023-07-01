@@ -40,6 +40,7 @@ var Sprite = donburi.NewComponentType[SpriteData](SpriteData{})
 type SpriteStandData struct {
 	Count            int
 	Images           []*ebiten.Image
+	ImagesRight      []*ebiten.Image
 	Disabled         bool
 	IsDirectionRight bool
 }

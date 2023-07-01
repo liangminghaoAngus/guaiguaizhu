@@ -26,12 +26,13 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	if name := enums.GetRaceName(raceInt); name == "" {
 		panic("unknow race")
 	}
-	// todo race image
 	standImages := make([]*ebiten.Image, 0)
+	standImagesLeft := make([]*ebiten.Image, 0)
 	switch raceInt {
 	case enums.RaceGod:
 	case enums.RaceHuman:
-		standImages = assetImages.HumanStandImges
+		standImages = assetImages.HumanStandImgs
+		standImagesLeft = assetImages.HumanStandImgsLeft
 	case enums.RaceDevil:
 	}
 
@@ -47,6 +48,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		IsDirectionRight: true,
 		Disabled:         false,
 		Images:           standImages,
+		ImagesRight:      standImagesLeft,
 	})
 	component.Control.SetValue(player, component.NewPlayerControl())
 

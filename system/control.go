@@ -25,9 +25,11 @@ func (m *Control) Update(w donburi.World) {
 		position := component.Position.Get(entry)
 		movement := component.Movement.Get(entry)
 		input := component.Control.Get(entry)
+		isLeftPosition := false
 
 		if ebiten.IsKeyPressed(input.Left) {
 			position.X -= movement.Speed
+			isLeftPosition = true
 			// fmt.Println(position)
 		} else if ebiten.IsKeyPressed(input.Right) {
 			position.X += movement.Speed
@@ -41,5 +43,13 @@ func (m *Control) Update(w donburi.World) {
 			print("input.UeKey")
 		}
 
+		// 判断是否存在 spriteStand 组件，根据前进方向修改贴图方向
+		if entry.HasComponent(component.SpriteStand) {
+			stand := component.SpriteStand.Get(entry)
+			// 判断是否进行了移动操作
+			if ebiten.IsKeyPressed(input.Left) || ebiten.IsKeyPressed(input.Right) {
+				stand.IsDirectionRight = !isLeftPosition
+			}
+		}
 	})
 }
