@@ -15,6 +15,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 type System interface {
@@ -50,8 +52,8 @@ func (g *Game) initGame(raceInt enums.Race) {
 	}
 
 	g.drawables = []Drawable{
-		render,
 		mapRender,
+		render,
 	}
 
 	g.world = g.createWorld(raceInt)
@@ -60,7 +62,9 @@ func (g *Game) initGame(raceInt enums.Race) {
 
 func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
-	world.Entry(world.Create(component.Game))
+	parent := world.Entry(world.Create(component.Game, transform.Transform))
+	transform.SetWorldPosition(parent, math.Vec2{X: 0, Y: 300})
+	// transform.SetWorldScale(parent, math.Vec2{X: 2, Y: 3})
 
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
@@ -83,8 +87,8 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 		Volume:       10,
 	})
 
-	entity.NewPlayer(world, raceInt)
-	// todo
+	player := entity.NewPlayer(world, raceInt)
+	transform.AppendChild(parent, player, false)
 	entity.NewRookieMap(world)
 
 	// create base layer

@@ -1,11 +1,15 @@
 package images
 
 import (
+	"bytes"
 	"embed"
+	"image"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 //go:embed race
@@ -13,6 +17,10 @@ var raceImageDir embed.FS
 
 //go:embed scene
 var sceneImageDir embed.FS
+
+//go:embed human_stand
+var humanStandImageDir embed.FS
+var HumanStandImges = make([]*ebiten.Image, 0)
 
 var RaceImage = map[enums.Race][]byte{
 	enums.RaceGod:   nil,
@@ -87,5 +95,18 @@ func Init() {
 		case "rookie_map.png":
 			MapImage[enums.MapRookie] = raw
 		}
+	}
+	humanStandDirEntry, err := humanStandImageDir.ReadDir("human_stand")
+	if err != nil {
+		panic(err)
+	}
+	HumanStandImges = make([]*ebiten.Image, len(humanStandDirEntry))
+	for index, entry := range humanStandDirEntry {
+		imageName := entry.Name()
+		filePath := path.Join("human_stand", imageName)
+		raw, _ := humanStandImageDir.ReadFile(filePath)
+		i, _, _ := image.Decode(bytes.NewReader(raw))
+
+		HumanStandImges[index] = ebiten.NewImageFromImage(i)
 	}
 }

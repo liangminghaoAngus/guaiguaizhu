@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"liangminghaoangus/guaiguaizhu/component"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -29,10 +28,10 @@ func (m *Control) Update(w donburi.World) {
 
 		if ebiten.IsKeyPressed(input.Left) {
 			position.X -= movement.Speed
-			fmt.Println(position)
+			// fmt.Println(position)
 		} else if ebiten.IsKeyPressed(input.Right) {
 			position.X += movement.Speed
-			fmt.Println(position)
+			// fmt.Println(position)
 		}
 
 		if ebiten.IsKeyPressed(input.EnterKey) {

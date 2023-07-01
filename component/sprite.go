@@ -36,3 +36,12 @@ func (s *SpriteData) Hidden() {
 }
 
 var Sprite = donburi.NewComponentType[SpriteData](SpriteData{})
+
+type SpriteStandData struct {
+	Count            int
+	Images           []*ebiten.Image
+	Disabled         bool
+	IsDirectionRight bool
+}
+
+var SpriteStand = donburi.NewComponentType[SpriteStandData](SpriteStandData{})

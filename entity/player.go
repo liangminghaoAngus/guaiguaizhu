@@ -1,20 +1,14 @@
 package entity
 
 import (
-	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/transform"
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
-)
 
-//	var PlayerEntity = map[string]donburi.IComponentType{
-//		"HealthData":   component.Health,
-//		"RaceData":     component.Race,
-//		"LevelData":    component.Level,
-//		"MovementData": component.Movement,
-//		"PositionData": component.Position,
-//		"SpriteData":   component.Sprite,
-//	}
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/transform"
+)
 
 var PlayerEntity = []donburi.IComponentType{
 	transform.Transform,
@@ -23,6 +17,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Level,
 	component.Movement,
 	component.Position,
+	component.SpriteStand,
 	//component.Sprite,
 	component.Control,
 }
@@ -30,6 +25,14 @@ var PlayerEntity = []donburi.IComponentType{
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	if name := enums.GetRaceName(raceInt); name == "" {
 		panic("unknow race")
+	}
+	// todo race image
+	standImages := make([]*ebiten.Image, 0)
+	switch raceInt {
+	case enums.RaceGod:
+	case enums.RaceHuman:
+		standImages = assetImages.HumanStandImges
+	case enums.RaceDevil:
 	}
 
 	playerEntity := w.Create(PlayerEntity...)
@@ -39,10 +42,15 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	component.Level.SetValue(player, component.NewLevelData())
 	component.Movement.SetValue(player, component.NewMovementData())
 	component.Position.SetValue(player, component.NewPositionData())
-	//component.Sprite.SetValue(player, component.SpriteData{})
+	// component.Sprite.SetValue(player, component.SpriteData{})
+	component.SpriteStand.SetValue(player, component.SpriteStandData{
+		IsDirectionRight: true,
+		Disabled:         false,
+		Images:           standImages,
+	})
 	component.Control.SetValue(player, component.NewPlayerControl())
 
-	return nil
+	return player
 }
 
 //func NewPlayer(w donburi.World, playerNumber int, faction component.PlayerFaction) *donburi.Entry {
