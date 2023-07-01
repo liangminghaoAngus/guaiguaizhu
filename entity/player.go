@@ -18,6 +18,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Movement,
 	component.Position,
 	component.SpriteStand,
+	component.SpriteMovement,
 	//component.Sprite,
 	component.Control,
 }
@@ -28,11 +29,15 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	}
 	standImages := make([]*ebiten.Image, 0)
 	standImagesLeft := make([]*ebiten.Image, 0)
+	movementLeftImages := make([]*ebiten.Image, 0)
+	movementRightImages := make([]*ebiten.Image, 0)
 	switch raceInt {
 	case enums.RaceGod:
 	case enums.RaceHuman:
 		standImages = assetImages.HumanStandImgs
 		standImagesLeft = assetImages.HumanStandImgsLeft
+		movementLeftImages = assetImages.HumanMovementLeftImgs
+		movementRightImages = assetImages.HumanMovementRightImgs
 	case enums.RaceDevil:
 	}
 
@@ -49,6 +54,12 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		Disabled:         false,
 		Images:           standImages,
 		ImagesRight:      standImagesLeft,
+	})
+	component.SpriteMovement.SetValue(player, component.SpriteMovementData{
+		IsDirectionRight: true,
+		Disabled:         true,
+		LeftImages:       movementLeftImages,
+		RightImages:      movementRightImages,
 	})
 	component.Control.SetValue(player, component.NewPlayerControl())
 

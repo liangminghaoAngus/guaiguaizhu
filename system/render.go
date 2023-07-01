@@ -31,19 +31,34 @@ func (r *Render) Update(w donburi.World) {
 
 	// 修改 sprite 渲染
 	r.query.Each(w, func(entry *donburi.Entry) {
-		// 判断是否实体存在 spriteStand 贴图和 position 数据
+		// 判断是否实体存在 spriteStand
 		if entry.HasComponent(component.SpriteStand) {
-			// position := component.Position.Get(entry)
 			standImages := component.SpriteStand.Get(entry)
-			if standImages.Disabled {
-				return
+			if !standImages.Disabled {
+				index := (standImages.Count / 5) % 8
+				if index > len(standImages.Images)-1 {
+					standImages.Count = 0
+					index = 0
+				}
+				standImages.Count++
+			} else {
+				standImages.Count = 0 // 重置动画
 			}
-			index := (standImages.Count / 5) % 8
-			if index > len(standImages.Images)-1 {
-				standImages.Count = 0
-				index = 0
+		}
+
+		// 判断是否实体存在 spriteMovement
+		if entry.HasComponent(component.SpriteMovement) {
+			move := component.SpriteMovement.Get(entry)
+			if !move.Disabled {
+				index := (move.Count / 5) % 8
+				if index > len(move.LeftImages)-1 {
+					move.Count = 0
+					index = 0
+				}
+				move.Count++
+			} else {
+				move.Count = 0 // 重置动画
 			}
-			standImages.Count++
 		}
 
 	})
@@ -56,25 +71,43 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 	r.query.Each(w, func(entry *donburi.Entry) {
 		entries = append(entries, entry)
 		pos := transform.WorldPosition(entry)
+		position := component.Position.Get(entry)
+
+		if entry.HasComponent(component.SpriteMovement) && entry.HasComponent(component.Position) {
+			movementImages := component.SpriteMovement.Get(entry)
+			if !movementImages.Disabled {
+				index := (movementImages.Count / 5) % 8
+				// 判断是否需要翻转贴图方向
+				targetImage := &ebiten.Image{}
+				if movementImages.IsDirectionRight {
+					targetImage = movementImages.RightImages[index]
+				} else {
+					targetImage = movementImages.LeftImages[index]
+				}
+
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
+				screen.DrawImage(targetImage, op)
+			}
+		}
 
 		if entry.HasComponent(component.SpriteStand) && entry.HasComponent(component.Position) {
-			position := component.Position.Get(entry)
+			// position := component.Position.Get(entry)
 			standImages := component.SpriteStand.Get(entry)
-			if standImages.Disabled {
-				return
-			}
-			index := (standImages.Count / 5) % 8
-			// 判断是否需要翻转贴图方向
-			targetImage := &ebiten.Image{}
-			if standImages.IsDirectionRight {
-				targetImage = standImages.Images[index]
-			} else {
-				targetImage = standImages.ImagesRight[index]
-			}
+			if !standImages.Disabled {
+				index := (standImages.Count / 5) % 8
+				// 判断是否需要翻转贴图方向
+				targetImage := &ebiten.Image{}
+				if standImages.IsDirectionRight {
+					targetImage = standImages.Images[index]
+				} else {
+					targetImage = standImages.ImagesRight[index]
+				}
 
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
-			screen.DrawImage(targetImage, op)
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
+				screen.DrawImage(targetImage, op)
+			}
 		}
 
 	})

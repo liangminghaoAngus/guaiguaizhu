@@ -49,6 +49,19 @@ func (m *Control) Update(w donburi.World) {
 			// 判断是否进行了移动操作
 			if ebiten.IsKeyPressed(input.Left) || ebiten.IsKeyPressed(input.Right) {
 				stand.IsDirectionRight = !isLeftPosition
+				stand.Disabled = true
+			} else {
+				stand.Disabled = false
+			}
+		}
+		// 判断是否存在 spriteMovement 组件
+		if entry.HasComponent(component.SpriteMovement) {
+			move := component.SpriteMovement.Get(entry)
+			if ebiten.IsKeyPressed(input.Left) || ebiten.IsKeyPressed(input.Right) {
+				move.Disabled = false
+				move.IsDirectionRight = !isLeftPosition
+			} else {
+				move.Disabled = true
 			}
 		}
 	})

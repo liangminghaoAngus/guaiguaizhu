@@ -23,6 +23,11 @@ var humanStandImageDir embed.FS
 var HumanStandImgs = make([]*ebiten.Image, 0)
 var HumanStandImgsLeft = make([]*ebiten.Image, 0)
 
+//go:embed human_movement
+var humanMovementImageDir embed.FS
+var HumanMovementLeftImgs = make([]*ebiten.Image, 0)
+var HumanMovementRightImgs = make([]*ebiten.Image, 0)
+
 var RaceImage = map[enums.Race][]byte{
 	enums.RaceGod:   nil,
 	enums.RaceHuman: nil,
@@ -122,5 +127,32 @@ func Init() {
 		HumanStandImgsLeft[index] = ebiten.NewImageFromImage(newImage)
 
 		HumanStandImgs[index] = ebiten.NewImageFromImage(i)
+	}
+
+	humanMovementDirEntry, err := humanMovementImageDir.ReadDir("human_movement")
+	if err != nil {
+		panic(err)
+	}
+	HumanMovementLeftImgs = make([]*ebiten.Image, len(humanMovementDirEntry))
+	HumanMovementRightImgs = make([]*ebiten.Image, len(humanMovementDirEntry))
+	for index, entry := range humanMovementDirEntry {
+		imageName := entry.Name()
+		filePath := path.Join("human_movement", imageName)
+		raw, _ := humanMovementImageDir.ReadFile(filePath)
+		i, _, _ := image.Decode(bytes.NewReader(raw))
+
+		b := i.Bounds()
+		newImage := image.NewRGBA(b)
+		for x := b.Min.X; x < b.Max.X; x++ {
+			for y := b.Min.Y; y < b.Max.Y; y++ {
+				newPixel := i.At((b.Max.X-1)-x, y)
+				newImage.Set(x, y, newPixel)
+			}
+		}
+
+		// 生成向左的图片
+		HumanMovementLeftImgs[index] = ebiten.NewImageFromImage(newImage)
+
+		HumanMovementRightImgs[index] = ebiten.NewImageFromImage(i)
 	}
 }
