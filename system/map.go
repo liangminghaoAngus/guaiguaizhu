@@ -3,10 +3,8 @@ package system
 import (
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
-	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/samber/lo"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
@@ -19,7 +17,7 @@ type Map struct {
 
 func NewMap(mapInt enums.Map) *Map {
 	return &Map{
-		query: query.NewQuery(filter.Contains(transform.Transform, component.Sprite)),
+		query: query.NewQuery(filter.Contains(transform.Transform, component.Sprite, component.Map)),
 	}
 }
 
@@ -29,16 +27,25 @@ func (m *Map) Update(w donburi.World) {
 
 func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 
-	var entries []*donburi.Entry
+	// var entries []*donburi.Entry
 	m.query.Each(w, func(entry *donburi.Entry) {
-		entries = append(entries, entry)
+		// entries = append(entries, entry)
+		mapData := component.Sprite.Get(entry)
+		// 计算尺寸
+		img := mapData.Image.Bounds().Size()
+		scr := screen.Bounds().Size()
+		op := &ebiten.DrawImageOptions{}
+		scX, scY := float64(scr.X)/float64(img.X), float64(scr.Y)/float64(img.Y)
+		op.GeoM.Scale(scX, scY)
+
+		screen.DrawImage(mapData.Image, op)
 	})
 
-	byLayer := lo.GroupBy(entries, func(entry *donburi.Entry) int {
-		return int(component.Sprite.Get(entry).Layer)
-	})
-	layers := lo.Keys(byLayer)
-	sort.Ints(layers)
+	// byLayer := lo.GroupBy(entries, func(entry *donburi.Entry) int {
+	// 	return int(component.Sprite.Get(entry).Layer)
+	// })
+	// layers := lo.Keys(byLayer)
+	// sort.Ints(layers)
 
 	// for _, layer := range layers {
 	// 	for _, entry := range byLayer[layer] {

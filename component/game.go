@@ -13,6 +13,8 @@ type GameData struct {
 
 var Game = donburi.NewComponentType[GameData](GameData{})
 
+var Map = donburi.NewTag()
+
 func MustFindGame(w donburi.World) *GameData {
 	game, ok := query.NewQuery(filter.Contains(Game)).First(w)
 	if !ok {

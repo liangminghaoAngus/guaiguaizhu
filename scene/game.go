@@ -40,15 +40,18 @@ func NewGame(raceInt enums.Race) *Game {
 
 func (g *Game) initGame(raceInt enums.Race) {
 	render := system.NewRender()
+	mapRender := system.NewMap(enums.MapRookie)
 	// todo append system
 	g.systems = []System{
 		render,
 		system.NewControl(),
 		system.NewSound(),
+		mapRender,
 	}
 
 	g.drawables = []Drawable{
 		render,
+		mapRender,
 	}
 
 	g.world = g.createWorld(raceInt)

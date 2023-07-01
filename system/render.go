@@ -1,15 +1,16 @@
 package system
 
 import (
+	"liangminghaoangus/guaiguaizhu/component"
+	"math"
+	"sort"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/samber/lo"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
-	"liangminghaoangus/guaiguaizhu/component"
-	"math"
-	"sort"
 )
 
 type Render struct {
@@ -19,7 +20,7 @@ type Render struct {
 
 func NewRender() *Render {
 	r := &Render{
-		query:     query.NewQuery(filter.Contains(transform.Transform, component.Sprite)),
+		query:     query.NewQuery(filter.And(filter.Contains(transform.Transform, component.Sprite), filter.Not(filter.Contains(component.Map)))),
 		offscreen: ebiten.NewImage(3000, 3000),
 	}
 	return r
