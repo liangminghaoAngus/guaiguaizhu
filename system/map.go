@@ -1,6 +1,7 @@
 package system
 
 import (
+	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
 
@@ -12,16 +13,43 @@ import (
 )
 
 type Map struct {
-	query *query.Query
+	query    *query.Query // 地图底层
+	children *query.Query // 地图内的碰撞实体
 }
 
 func NewMap(mapInt enums.Map) *Map {
 	return &Map{
-		query: query.NewQuery(filter.Contains(transform.Transform, component.Sprite, component.Map)),
+		query:    query.NewQuery(filter.Contains(transform.Transform, component.Sprite, component.Map)),
+		children: query.NewQuery(filter.Contains(transform.Transform, component.Position, component.Collision)),
 	}
 }
 
 func (m *Map) Update(w donburi.World) {
+	// 计算 collision space
+	m.children.Each(w, func(e *donburi.Entry) {
+		wPos := transform.WorldPosition(e)
+		position := component.Position.Get(e)
+		c := component.Collision.Get(e)
+		for _, item := range c.Items {
+			x, y := wPos.X+position.X, wPos.Y+position.Y
+
+			// bug here y is not work
+			if happen := item.Check(x, y); happen != nil {
+				contact := happen.ContactWithObject(happen.Objects[0])
+				position.X = contact.X()
+				if contact.X() <= 1 {
+					position.X += 1
+				}
+
+				// position.Y = contact.Y()
+				// fmt.Println("X")
+				// fmt.Printf("%+v /n", happen)
+			}
+
+			item.Update()
+		}
+
+	})
 
 }
 
@@ -39,6 +67,14 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 		op.GeoM.Scale(scX, scY)
 
 		screen.DrawImage(mapData.Image, op)
+
+		if entry.HasComponent(component.CollisionSpace) {
+			space := component.CollisionSpace.Get(entry)
+			d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
+			d.Fill(color.White)
+			screen.DrawImage(d, &ebiten.DrawImageOptions{})
+		}
+
 	})
 
 	// byLayer := lo.GroupBy(entries, func(entry *donburi.Entry) int {

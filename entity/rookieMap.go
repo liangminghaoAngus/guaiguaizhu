@@ -31,9 +31,18 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 	spaceW, spaceH := 1280, 640
 	img, _, _ := image.Decode(bytes.NewReader(assetsImage.MapImage[enums.MapRookie]))
 	bg := ebiten.NewImageFromImage(img)
-	space := resolv.NewSpace(spaceW, spaceH, 4, 4)
+	cellSize := 1
+	space := resolv.NewSpace(spaceW, spaceH, cellSize, cellSize)
+	// 制造地图边界
+	_, left, _, right := createMapBound(0, 0, 1280, 1), createMapBound(0, 0, 1, 640), createMapBound(0, 640-float64(cellSize*2), 1280, 1), createMapBound(1280-float64(cellSize*2), 0, 1, 640)
+	space.Add(left, right)
+
 	component.Sprite.SetValue(rookieMap, component.SpriteData{Image: bg})
 	component.CollisionSpace.SetValue(rookieMap, component.CollisionSpaceData{Space: space})
 
-	return nil
+	return rookieMap
+}
+
+func createMapBound(x, y, w, h float64) *resolv.Object {
+	return resolv.NewObject(x, y, w, h, "mapBound")
 }

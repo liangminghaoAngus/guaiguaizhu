@@ -87,9 +87,14 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 		Volume:       10,
 	})
 
+	rookieMap := entity.NewRookieMap(world)
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)
-	entity.NewRookieMap(world)
+
+	// 将 player 添加至 rookie map bound
+	rSpace := component.CollisionSpace.Get(rookieMap)
+	pCollision := component.Collision.Get(player)
+	rSpace.Space.Add(pCollision.Items...)
 
 	// create base layer
 	//playerEntity := entity.NewPlayer(world, raceInt)

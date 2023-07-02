@@ -47,7 +47,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 
 	playerEntity := w.Create(PlayerEntity...)
 	player := w.Entry(playerEntity)
-	playerCollision := resolv.NewObject(0, 0, float64(playerW), float64(playerH), "player")
+	playerCollision := resolv.NewObject(20, 20, float64(playerW), float64(playerH), "player")
 	component.Health.SetValue(player, component.NewPlayerHealthData())
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
 	component.Level.SetValue(player, component.NewLevelData())
