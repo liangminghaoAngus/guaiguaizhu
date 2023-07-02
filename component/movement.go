@@ -10,6 +10,6 @@ var Movement = donburi.NewComponentType[MovementData](MovementData{})
 
 func NewMovementData() MovementData {
 	return MovementData{
-		Speed: 0.8,
+		Speed: 2.4,
 	}
 }

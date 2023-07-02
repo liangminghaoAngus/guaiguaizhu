@@ -1,10 +1,16 @@
 package system
 
 import (
+	"fmt"
+	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"strconv"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
@@ -31,7 +37,8 @@ func (m *Map) Update(w donburi.World) {
 		c := component.Collision.Get(e)
 		for _, item := range c.Items {
 			x, y := wPos.X+position.X, wPos.Y+position.Y
-
+			x, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", x), 64)
+			y, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", y), 64)
 			// bug here y is not work
 			if happen := item.Check(x, y); happen != nil {
 				contact := happen.ContactWithObject(happen.Objects[0])
@@ -42,7 +49,7 @@ func (m *Map) Update(w donburi.World) {
 
 				// position.Y = contact.Y()
 				// fmt.Println("X")
-				// fmt.Printf("%+v /n", happen)
+				fmt.Printf("%+v \n", happen)
 			}
 
 			item.Update()
@@ -68,12 +75,20 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 		screen.DrawImage(mapData.Image, op)
 
 		// just debug collision
-		// if entry.HasComponent(component.CollisionSpace) {
-		// 	space := component.CollisionSpace.Get(entry)
-		// 	d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
-		// 	d.Fill(color.White)
-		// 	screen.DrawImage(d, &ebiten.DrawImageOptions{})
-		// }
+		if entry.HasComponent(component.CollisionSpace) {
+			space := component.CollisionSpace.Get(entry)
+			for _, v := range space.Space.Objects() {
+				d := ebiten.NewImage(int(v.W), int(v.H))
+				d.Fill(color.White)
+				op := ebiten.DrawImageOptions{}
+				text.Draw(screen, strings.Join(v.Tags(), ","), config.GetSystemFont(), int(v.X), int(v.Y), color.Black)
+				op.GeoM.Translate(v.X, v.Y)
+				screen.DrawImage(d, &op)
+			}
+			// d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
+			// d.Fill(color.White)
+			// screen.DrawImage(d, &ebiten.DrawImageOptions{})
+		}
 
 	})
 
