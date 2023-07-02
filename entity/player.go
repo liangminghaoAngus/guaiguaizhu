@@ -6,6 +6,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/enums"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 )
@@ -19,14 +20,17 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Position,
 	component.SpriteStand,
 	component.SpriteMovement,
-	//component.Sprite,
 	component.Control,
+	component.Collision,
 }
 
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	if name := enums.GetRaceName(raceInt); name == "" {
 		panic("unknow race")
 	}
+	// todo 设计 player 的模型
+	playerH, playerW := 80, 50
+
 	standImages := make([]*ebiten.Image, 0)
 	standImagesLeft := make([]*ebiten.Image, 0)
 	movementLeftImages := make([]*ebiten.Image, 0)
@@ -43,12 +47,12 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 
 	playerEntity := w.Create(PlayerEntity...)
 	player := w.Entry(playerEntity)
+	playerCollision := resolv.NewObject(0, 0, float64(playerW), float64(playerH), "player")
 	component.Health.SetValue(player, component.NewPlayerHealthData())
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
 	component.Level.SetValue(player, component.NewLevelData())
 	component.Movement.SetValue(player, component.NewMovementData())
 	component.Position.SetValue(player, component.NewPositionData())
-	// component.Sprite.SetValue(player, component.SpriteData{})
 	component.SpriteStand.SetValue(player, component.SpriteStandData{
 		IsDirectionRight: true,
 		Disabled:         false,
@@ -62,6 +66,11 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		RightImages:      movementRightImages,
 	})
 	component.Control.SetValue(player, component.NewPlayerControl())
+	component.Collision.SetValue(player, component.CollisionData{
+		Debug:     true,
+		Items:     []*resolv.Object{playerCollision},
+		TagsOrder: []string{"player"},
+	})
 
 	return player
 }

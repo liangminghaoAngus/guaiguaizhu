@@ -1,6 +1,7 @@
 package system
 
 import (
+	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -72,6 +73,21 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		entries = append(entries, entry)
 		pos := transform.WorldPosition(entry)
 		position := component.Position.Get(entry)
+
+		if entry.HasComponent(component.Collision) && entry.HasComponent(component.Position) {
+			collision := component.Collision.Get(entry)
+			for _, object := range collision.Items {
+				object.X = pos.X + position.X
+				object.Y = pos.Y + position.Y
+				if collision.Debug {
+					debugBounds := ebiten.NewImage(int(object.W), int(object.H))
+					debugBounds.Fill(color.Black)
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
+					screen.DrawImage(debugBounds, op)
+				}
+			}
+		}
 
 		if entry.HasComponent(component.SpriteMovement) && entry.HasComponent(component.Position) {
 			movementImages := component.SpriteMovement.Get(entry)
