@@ -1,7 +1,6 @@
 package system
 
 import (
-	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
 
@@ -68,12 +67,13 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 
 		screen.DrawImage(mapData.Image, op)
 
-		if entry.HasComponent(component.CollisionSpace) {
-			space := component.CollisionSpace.Get(entry)
-			d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
-			d.Fill(color.White)
-			screen.DrawImage(d, &ebiten.DrawImageOptions{})
-		}
+		// just debug collision
+		// if entry.HasComponent(component.CollisionSpace) {
+		// 	space := component.CollisionSpace.Get(entry)
+		// 	d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
+		// 	d.Fill(color.White)
+		// 	screen.DrawImage(d, &ebiten.DrawImageOptions{})
+		// }
 
 	})
 
