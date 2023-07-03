@@ -9,6 +9,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/system"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -69,6 +70,8 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
 	// todo need to do switch music
+	bytesPerSample := 4
+	sampleRate := 11025
 	s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
 	if err != nil {
 		println("music err")
@@ -81,6 +84,7 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	p := audioContext.NewPlayerFromBytes(m)
 	component.Sound.SetValue(soundEntity, component.SoundData{
 		Loop:         true,
+		Total:        time.Second * time.Duration(s.Length()) / time.Duration(bytesPerSample) / time.Duration(sampleRate),
 		AudioContext: audioContext,
 		AudioPlayer:  p,
 		Mp3Byte:      sound.Intro,

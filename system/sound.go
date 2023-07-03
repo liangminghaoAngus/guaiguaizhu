@@ -26,8 +26,10 @@ func (s *Sound) Update(w donburi.World) {
 			sound.AudioPlayer.Pause()
 			return
 		}
+		if sound.AudioPlayer.Current() == sound.Total && sound.Loop {
+			_ = sound.AudioPlayer.Seek(0)
+		}
 		sound.AudioPlayer.SetVolume(float64(sound.Volume))
 		sound.AudioPlayer.Play()
-
 	})
 }

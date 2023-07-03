@@ -5,12 +5,14 @@ import (
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
+	"time"
 )
 
 type SoundData struct {
 	Paused       bool
 	Loop         bool
 	Mp3Byte      []byte
+	Total        time.Duration
 	AudioContext *audio.Context
 	AudioPlayer  *audio.Player
 	Volume       int
