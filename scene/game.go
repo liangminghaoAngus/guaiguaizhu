@@ -99,19 +99,6 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	pCollision := component.Collision.Get(player)
 	rSpace.Space.Add(pCollision.Items...)
 
-	// create base layer
-	//playerEntity := entity.NewPlayer(world, raceInt)
-
-	//levelEntry := world.Entry(
-	//	world.Create(transform.Transform, component.Sprite),
-	//)
-	//
-	//component.Sprite.SetValue(levelEntry, component.SpriteData{
-	//	Image: levelAsset.Background,
-	//	Layer: component.SpriteLayerBackground,
-	//	Pivot: component.SpritePivotTopLeft,
-	//})
-
 	return world
 }
 

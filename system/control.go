@@ -21,6 +21,7 @@ func NewControl() *Control {
 }
 
 func (m *Control) Update(w donburi.World) {
+	gameData := component.MustFindGame(w)
 	m.query.Each(w, func(entry *donburi.Entry) {
 		position := component.Position.Get(entry)
 		movement := component.Movement.Get(entry)
@@ -63,6 +64,11 @@ func (m *Control) Update(w donburi.World) {
 			} else {
 				move.Disabled = true
 			}
+		}
+
+		// storeOpen
+		if ebiten.IsKeyPressed(input.StoreKey) {
+			gameData.IsPlayerStoreOpen = !gameData.IsPlayerStoreOpen
 		}
 	})
 }

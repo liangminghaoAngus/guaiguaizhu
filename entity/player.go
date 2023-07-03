@@ -23,6 +23,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.SpriteMovement,
 	component.Control,
 	component.Collision,
+	component.Store,
 }
 
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {

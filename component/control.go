@@ -6,10 +6,13 @@ import (
 )
 
 type ControlData struct {
-	Left        ebiten.Key
-	Right       ebiten.Key
-	EnterKey    ebiten.Key
-	UeKey       ebiten.Key
+	Left     ebiten.Key
+	Right    ebiten.Key
+	EnterKey ebiten.Key
+	UeKey    ebiten.Key
+
+	StoreKey ebiten.Key // 打开/关闭背包
+
 	AbilityKeys map[ebiten.Key]int
 }
 
@@ -21,6 +24,7 @@ func NewPlayerControl() ControlData {
 		Right:       ebiten.KeyArrowRight,
 		EnterKey:    ebiten.KeyArrowUp,
 		UeKey:       ebiten.KeyF,
+		StoreKey:    ebiten.KeyB,
 		AbilityKeys: make(map[ebiten.Key]int),
 	}
 }

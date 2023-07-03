@@ -7,8 +7,9 @@ import (
 )
 
 type GameData struct {
-	Pause    bool
-	SaveData []interface{}
+	Pause             bool
+	IsPlayerStoreOpen bool
+	SaveData          []interface{}
 }
 
 var Game = donburi.NewComponentType[GameData](GameData{})
