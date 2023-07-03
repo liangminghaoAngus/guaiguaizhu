@@ -5,6 +5,7 @@ import (
 	"image"
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -28,13 +29,17 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 	rookieMapEntity := w.Create(RookieMap...)
 	rookieMap := w.Entry(rookieMapEntity)
 
-	spaceW, spaceH := 1280, 640
+	c := config.GetConfig()
+	spaceW, spaceH := c.ScreenWidth, c.ScreenHeight
 	img, _, _ := image.Decode(bytes.NewReader(assetsImage.MapImage[enums.MapRookie]))
 	bg := ebiten.NewImageFromImage(img)
-	cellSize := 1
-	space := resolv.NewSpace(spaceW, spaceH, cellSize, cellSize)
+	cellSize := 2
+	space := resolv.NewSpace(spaceW*cellSize, spaceH*cellSize, cellSize, cellSize)
 	// 制造地图边界
-	_, left, _, right := createMapBound(0, 0, 1280, 1), createMapBound(0, 0, 1, 640), createMapBound(0, 640-float64(cellSize*2), 1280, 1), createMapBound(1280-float64(cellSize*2), 0, 1, 640)
+	//_, := createMapBound(0, 0, 1280, 1)
+	left := createMapBound(0, 0, float64(cellSize), 640)
+	//_ := createMapBound(0, 640-float64(cellSize*2), 1280, 1)
+	right := createMapBound(1280-float64(cellSize*2), 0, float64(cellSize), 640)
 	space.Add(left, right)
 
 	component.Sprite.SetValue(rookieMap, component.SpriteData{Image: bg})

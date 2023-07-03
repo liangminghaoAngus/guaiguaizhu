@@ -81,7 +81,8 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				object.X = pos.X + position.X
 				object.Y = pos.Y + position.Y
 				if collision.Debug {
-					debugBounds := ebiten.NewImage(int(object.W), int(object.H))
+					ceil := 2
+					debugBounds := ebiten.NewImage(int(object.W)*ceil, int(object.H)*ceil)
 					debugBounds.Fill(color.Black)
 					op := &ebiten.DrawImageOptions{}
 					op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
