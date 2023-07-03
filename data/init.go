@@ -20,5 +20,5 @@ func Init() {
 }
 
 func getDb() *gorm.DB {
-	return db
+	return db.Debug()
 }
