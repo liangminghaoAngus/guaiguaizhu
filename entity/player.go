@@ -16,6 +16,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Health,
 	component.Race,
 	component.Level,
+	component.Ability,
 	component.Movement,
 	component.Position,
 	component.SpriteStand,
@@ -71,32 +72,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		Items:     []*resolv.Object{playerCollision},
 		TagsOrder: []string{"player"},
 	})
+	component.Ability.SetValue(player, component.NewAbility(raceInt))
 
 	return player
 }
-
-//func NewPlayer(w donburi.World, playerNumber int, faction component.PlayerFaction) *donburi.Entry {
-//	_, ok := Players[playerNumber]
-//	if !ok {
-//		panic(fmt.Sprintf("unknown player number: %v", playerNumber))
-//	}
-//
-//	player := component.PlayerData{
-//		PlayerNumber:  playerNumber,
-//		PlayerFaction: faction,
-//		Lives:         3,
-//		RespawnTimer:  engine.NewTimer(time.Second * 3),
-//		WeaponLevel:   component.WeaponLevelSingle,
-//	}
-//
-//	// TODO It looks like a constructor would fit here
-//	player.ShootTimer = engine.NewTimer(player.WeaponCooldown())
-//
-//	return NewPlayerFromPlayerData(w, player)
-//}
-//
-//func NewPlayerFromPlayerData(w donburi.World, playerData component.PlayerData) *donburi.Entry {
-//	player := w.Entry(w.Create(component.Player))
-//	component.Player.SetValue(player, playerData)
-//	return player
-//}
