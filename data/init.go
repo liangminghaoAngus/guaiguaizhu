@@ -1,10 +1,11 @@
 package data
 
 import (
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
 	"os"
 	"path"
+
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
 )
 
 var db *gorm.DB
@@ -17,6 +18,11 @@ func Init() {
 	} else {
 		db = con
 	}
+
+	if !db.Migrator().HasTable("ability") {
+		db.Migrator().CreateTable(Ability{})
+	}
+
 }
 
 func getDb() *gorm.DB {

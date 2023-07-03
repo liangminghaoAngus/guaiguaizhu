@@ -42,14 +42,11 @@ func (m *Map) Update(w donburi.World) {
 			// bug here y is not work
 			if happen := item.Check(x, y); happen != nil {
 				contact := happen.ContactWithObject(happen.Objects[0])
+				fmt.Println(happen.Objects[0])
 				position.X = contact.X()
 				if contact.X() <= 1 {
 					position.X += 1
 				}
-
-				// position.Y = contact.Y()
-				// fmt.Println("X")
-				fmt.Printf("%+v \n", happen)
 			}
 
 			item.Update()
@@ -77,6 +74,8 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 		// just debug collision
 		if entry.HasComponent(component.CollisionSpace) {
 			space := component.CollisionSpace.Get(entry)
+			// space := spaceC.Space
+
 			for _, v := range space.Space.Objects() {
 				d := ebiten.NewImage(int(v.W), int(v.H))
 				d.Fill(color.White)
@@ -85,6 +84,7 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 				op.GeoM.Translate(v.X, v.Y)
 				screen.DrawImage(d, &op)
 			}
+
 			// d := ebiten.NewImage(space.Space.Width(), space.Space.Height())
 			// d.Fill(color.White)
 			// screen.DrawImage(d, &ebiten.DrawImageOptions{})

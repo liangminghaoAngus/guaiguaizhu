@@ -12,6 +12,15 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed ui/ui.png
+var SystemUI []byte
+
+//go:embed ui/hp.png
+var SystemHP []byte
+
+//go:embed ui/mp.png
+var SystemMP []byte
+
 //go:embed race
 var raceImageDir embed.FS
 
