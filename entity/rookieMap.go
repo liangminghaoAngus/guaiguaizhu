@@ -40,6 +40,10 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 	component.Sprite.SetValue(rookieMap, component.SpriteData{Image: bg})
 	component.CollisionSpace.SetValue(rookieMap, component.CollisionSpaceData{Space: space})
 
+	// 放置需要的 npc
+	npcIDs := []int{1, 2, 3}
+	NewNPCs(w, npcIDs)
+
 	return rookieMap
 }
 
