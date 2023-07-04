@@ -63,6 +63,9 @@ func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 			// Calculate the position of each item
 			x := i * itemCeil
 			y := j * itemCeil
+
+			// todo draw item with drag & drop
+
 			// Draw a border around each item
 			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(itemCeil), float32(borderSize), color.Black, false)
 			vector.DrawFilledRect(uiMain, float32(x), float32(y)+float32(itemCeil-borderSize), float32(itemCeil), float32(borderSize), color.Black, false) // Bottom border

@@ -26,7 +26,7 @@ func NewRender() *Render {
 				filter.Contains(transform.Transform),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
 				filter.Not(filter.Contains(component.Map)))),
-		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Player, component.Level)),
+		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Player, component.Level, component.Store)),
 		offscreen: ebiten.NewImage(3000, 3000),
 	}
 	return r
@@ -181,9 +181,11 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		}
 	}
 
-	//
 	if gameData.IsPlayerStoreOpen {
-		// draw store
-		// item can drag drop
+		if ok {
+			backpack := component.Store.Get(playerEntity)
+			// draw store
+			backpack.DrawBackpackUI(screen)
+		}
 	}
 }
