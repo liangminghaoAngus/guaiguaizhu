@@ -3,13 +3,17 @@ package component
 import "github.com/yohamta/donburi"
 
 type MovementData struct {
-	Speed float64
+	VelocityX     float64
+	AccelerationX float64
+	MaxSpeed      float64
 }
 
 var Movement = donburi.NewComponentType[MovementData](MovementData{})
 
 func NewMovementData() MovementData {
 	return MovementData{
-		Speed: 2.4,
+		VelocityX:     0,
+		AccelerationX: 1.8,
+		MaxSpeed:      2.4,
 	}
 }
