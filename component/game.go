@@ -5,6 +5,7 @@ import (
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
+	"liangminghaoangus/guaiguaizhu/config"
 )
 
 type GameData struct {
@@ -12,6 +13,7 @@ type GameData struct {
 	SystemUI          *ebiten.Image
 	IsPlayerStoreOpen bool
 	SaveData          []interface{}
+	ConfigData        config.Config
 }
 
 var Game = donburi.NewComponentType[GameData](GameData{})

@@ -38,6 +38,12 @@ type Config struct {
 	ScreenWidth  int    `json:"screen_width"`
 	ScreenHeight int    `json:"screen_height"`
 	GameName     string `json:"game_name"`
+
+	// setting
+	IsPlayMusic bool `json:"is_play_music"`
+	MusicVolume int  `json:"music_volume"`
+	AutoHealHP  bool `json:"auto_heal_hp"`
+	AutoHealMP  bool `json:"auto_heal_mp"`
 }
 
 func Init(fileName string) {

@@ -1,7 +1,10 @@
 package component
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/yohamta/donburi"
+	"image/color"
 )
 
 type Index struct {
@@ -49,6 +52,32 @@ var defaultStore = func() StoreData {
 }()
 
 var Store = donburi.NewComponentType[StoreData](defaultStore)
+
+func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
+	itemCeil := 20
+	borderSize := 1
+	wpx, hpx := itemCeil*d.Width, itemCeil*d.Height
+	uiMain := ebiten.NewImage(wpx, hpx)
+	for i := 0; i < d.Height; i++ {
+		for j := 0; j < d.Width; j++ {
+			// Calculate the position of each item
+			x := i * itemCeil
+			y := j * itemCeil
+			// Draw a border around each item
+			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(itemCeil), float32(borderSize), color.Black, false)
+			vector.DrawFilledRect(uiMain, float32(x), float32(y)+float32(itemCeil-borderSize), float32(itemCeil), float32(borderSize), color.Black, false) // Bottom border
+			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(borderSize), float32(itemCeil), color.Black, false)
+			// Left border
+			vector.DrawFilledRect(uiMain, float32(x)+float32(itemCeil-borderSize), float32(y), float32(borderSize), float32(itemCeil), color.Black, false) // Right border
+		}
+	}
+
+	op := &ebiten.DrawImageOptions{}
+	x, y := float64(screen.Bounds().Dx()-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()-uiMain.Bounds().Dy()/2)
+	op.GeoM.Translate(x, y)
+	// 居中绘制
+	screen.DrawImage(uiMain, op)
+}
 
 func (d *StoreData) AddItem(item StoreItem) bool {
 	// 判断同种类型是否存在背包中
