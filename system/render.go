@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
@@ -13,9 +14,9 @@ import (
 )
 
 type Render struct {
-	query        *query.Query
-	playerHealth *query.Query
-	offscreen    *ebiten.Image
+	query     *query.Query
+	playerUI  *query.Query
+	offscreen *ebiten.Image
 }
 
 func NewRender() *Render {
@@ -25,8 +26,8 @@ func NewRender() *Render {
 				filter.Contains(transform.Transform),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
 				filter.Not(filter.Contains(component.Map)))),
-		playerHealth: query.NewQuery(filter.Contains(component.Health, component.Player)),
-		offscreen:    ebiten.NewImage(3000, 3000),
+		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Player, component.Level)),
+		offscreen: ebiten.NewImage(3000, 3000),
 	}
 	return r
 }
@@ -133,7 +134,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
 	})
 
-	playerEntity, ok := r.playerHealth.First(w)
+	playerEntity, ok := r.playerUI.First(w)
 
 	// 绘制 UI
 	{
@@ -144,6 +145,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		screen.DrawImage(gameData.SystemUI, op)
 		if ok {
 			health := component.Health.Get(playerEntity)
+			level := component.Level.Get(playerEntity)
 			{ // hp
 				hpImage := health.HPui
 				percent := float64(health.HP) / float64(health.HPMax)
@@ -171,6 +173,10 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
 				screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+			}
+			{
+				// level todo
+				fmt.Println(level.LevelNum)
 			}
 		}
 	}

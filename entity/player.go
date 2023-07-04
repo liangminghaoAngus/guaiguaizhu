@@ -35,6 +35,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	}
 	// todo 设计 player 的模型
 	playerH, playerW := 80, 50
+	playerLevel := 1
 
 	standImages := make([]*ebiten.Image, 0)
 	standImagesLeft := make([]*ebiten.Image, 0)
@@ -60,7 +61,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	playerCollision := engine.NewObject(20, 20, float64(playerW), float64(playerH), "player")
 	component.Health.SetValue(player, component.NewPlayerHealthData(hp, mp))
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
-	component.Level.SetValue(player, component.NewLevelData())
+	component.Level.SetValue(player, component.NewLevelData(playerLevel))
 	component.Movement.SetValue(player, component.NewMovementData())
 	component.Position.SetValue(player, component.NewPositionData())
 	component.SpriteStand.SetValue(player, component.SpriteStandData{
