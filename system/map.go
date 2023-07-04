@@ -39,17 +39,21 @@ func (m *Map) Update(w donburi.World) {
 			x, y := wPos.X+position.X, wPos.Y+position.Y
 			x, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", x), 64)
 			y, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", y), 64)
-			// bug here y is not work
 			if happen := item.Check(x, y); happen != nil {
-				contact := happen.ContactWithObject(happen.Objects[0])
-				fmt.Println(happen.Objects[0])
-				position.X = contact.X()
-				if contact.X() <= 1 {
-					position.X += 1
+				c := happen.Objects[0]
+				rawX, rawY := x-c.Position.X, y-c.Position.Y
+				if rawX > 0 {
+					position.X = c.Position.X - 1
+				} else {
+					position.X = c.Position.X + 1
+				}
+
+				if rawY > 0 {
+					position.Y = c.Position.Y - 1
+				} else {
+					position.Y = c.Position.Y + 1
 				}
 			}
-
-			item.Update()
 		}
 
 	})
@@ -76,12 +80,12 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 			space := component.CollisionSpace.Get(entry)
 			// space := spaceC.Space
 
-			for _, v := range space.Space.Objects() {
-				d := ebiten.NewImage(int(v.W), int(v.H))
+			for _, v := range space.Space.Objects {
+				d := ebiten.NewImage(int(v.Width), int(v.Height))
 				d.Fill(color.White)
 				op := ebiten.DrawImageOptions{}
-				text.Draw(screen, strings.Join(v.Tags(), ","), config.GetSystemFont(), int(v.X), int(v.Y), color.Black)
-				op.GeoM.Translate(v.X, v.Y)
+				text.Draw(screen, strings.Join(v.Tags(), ","), config.GetSystemFont(), int(v.Position.X), int(v.Position.Y), color.Black)
+				op.GeoM.Translate(v.Position.X, v.Position.Y)
 				screen.DrawImage(d, &op)
 			}
 

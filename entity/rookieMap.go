@@ -5,10 +5,11 @@ import (
 	"image"
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/config"
+	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 )
@@ -28,21 +29,21 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 	rookieMapEntity := w.Create(RookieMap...)
 	rookieMap := w.Entry(rookieMapEntity)
 
-	// c := config.GetConfig()
-	// spaceW, spaceH := c.ScreenWidth, c.ScreenHeight
+	c := config.GetConfig()
+	spaceW, spaceH := float64(c.ScreenWidth), float64(c.ScreenHeight)
 	img, _, _ := image.Decode(bytes.NewReader(assetsImage.MapImage[enums.MapRookie]))
 	bg := ebiten.NewImageFromImage(img)
-	// cellSize := 8
-	// space := resolv.NewSpace(spaceW*cellSize, spaceH*cellSize, cellSize, cellSize)
+
+	space := engine.NewSpace(spaceW, spaceH)
 	// 制造地图边界
-	// top := createMapBound(0, 0, 1280, 1)
-	// left := createMapBound(0, 0, float64(cellSize), 640)
-	//_ := createMapBound(0, 640-float64(cellSize*2), 1280, 1)
-	// right := createMapBound(float64(space.Width()), 0, 16, 640)
-	// space.Add(left, right)
+	top := createMapBound(0, 0, spaceW, 2)
+	bot := createMapBound(0, spaceH-2, spaceW, 2)
+	left := createMapBound(0, 0, 2, spaceH)
+	right := createMapBound(spaceW-2, 0, 2, spaceH)
+	space.AddObject(top, bot, left, right)
 
 	component.Sprite.SetValue(rookieMap, component.SpriteData{Image: bg})
-	// component.CollisionSpace.SetValue(rookieMap, component.CollisionSpaceData{Space: space})
+	component.CollisionSpace.SetValue(rookieMap, component.CollisionSpaceData{Space: space})
 
 	// 放置需要的 npc
 	// npcIDs := []int{1, 2, 3}
@@ -51,6 +52,6 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 	return rookieMap
 }
 
-func createMapBound(x, y, w, h float64) *resolv.Object {
-	return resolv.NewObject(x, y, w, h, "mapBound")
+func createMapBound(x, y, w, h float64) *engine.Object {
+	return engine.NewObject(x, y, w, h, "mapBound")
 }

@@ -5,7 +5,7 @@ type Point struct {
 }
 
 type Object struct {
-	position Point
+	Position Point
 	space    *Space
 	Width    float64
 	Height   float64
@@ -18,10 +18,14 @@ type Collision struct {
 	Objects        []*Object
 }
 
+func (o *Object) Tags() []string {
+	return o.Targets
+}
+
 func (o *Object) Check(x, y float64) *Collision {
 	tmp := o
-	tmp.position.X = x
-	tmp.position.Y = y
+	tmp.Position.X = x
+	tmp.Position.Y = y
 
 	if o.space != nil {
 		for _, object := range o.space.Objects {
@@ -66,7 +70,7 @@ func NewSpace(w, h float64) *Space {
 
 func NewObject(x, y, w, h float64, target ...string) *Object {
 	o := &Object{
-		position: Point{x, y},
+		Position: Point{x, y},
 		Width:    w,
 		Height:   h,
 	}
@@ -78,10 +82,10 @@ func NewObject(x, y, w, h float64, target ...string) *Object {
 }
 
 func checkCollision(obj1, obj2 Object) bool {
-	if obj1.position.X < obj2.position.X+obj2.Width &&
-		obj1.position.X+obj1.Width > obj2.position.X &&
-		obj1.position.Y < obj2.position.Y+obj2.Height &&
-		obj1.position.Y+obj1.Height > obj2.position.Y {
+	if obj1.Position.X < obj2.Position.X+obj2.Width &&
+		obj1.Position.X+obj1.Width > obj2.Position.X &&
+		obj1.Position.Y < obj2.Position.Y+obj2.Height &&
+		obj1.Position.Y+obj1.Height > obj2.Position.Y {
 		return true
 	}
 	return false

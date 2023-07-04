@@ -82,11 +82,10 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		if entry.HasComponent(component.Collision) && entry.HasComponent(component.Position) {
 			collision := component.Collision.Get(entry)
 			for _, object := range collision.Items {
-				object.X = pos.X + position.X
-				object.Y = pos.Y + position.Y
+				object.Position.X = pos.X + position.X
+				object.Position.Y = pos.Y + position.Y
 				if collision.Debug {
-					ceil := 2
-					debugBounds := ebiten.NewImage(int(object.W)*ceil, int(object.H)*ceil)
+					debugBounds := ebiten.NewImage(int(object.Width), int(object.Height))
 					debugBounds.Fill(color.Black)
 					op := &ebiten.DrawImageOptions{}
 					op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
