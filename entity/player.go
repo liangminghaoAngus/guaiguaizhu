@@ -1,17 +1,19 @@
 package entity
 
 import (
+	"bytes"
+	"image"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/enums"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 )
 
 var PlayerEntity = []donburi.IComponentType{
+	component.Player,
 	transform.Transform,
 	component.Health,
 	component.Race,
@@ -31,7 +33,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		panic("unknow race")
 	}
 	// todo 设计 player 的模型
-	playerH, playerW := 80, 50
+	// playerH, playerW := 80, 50
 
 	standImages := make([]*ebiten.Image, 0)
 	standImagesLeft := make([]*ebiten.Image, 0)
@@ -47,10 +49,15 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	case enums.RaceDevil:
 	}
 
+	HPuiImage, _, _ := image.Decode(bytes.NewReader(assetImages.SystemHP))
+	MPuiImage, _, _ := image.Decode(bytes.NewReader(assetImages.SystemMP))
+	hp := ebiten.NewImageFromImage(HPuiImage)
+	mp := ebiten.NewImageFromImage(MPuiImage)
+
 	playerEntity := w.Create(PlayerEntity...)
 	player := w.Entry(playerEntity)
-	playerCollision := resolv.NewObject(20, 20, float64(playerW/2), float64(playerH/2), "player")
-	component.Health.SetValue(player, component.NewPlayerHealthData())
+	// playerCollision := resolv.NewObject(20, 20, float64(playerW/2), float64(playerH/2), "player")
+	component.Health.SetValue(player, component.NewPlayerHealthData(hp, mp))
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
 	component.Level.SetValue(player, component.NewLevelData())
 	component.Movement.SetValue(player, component.NewMovementData())
@@ -68,11 +75,11 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		RightImages:      movementRightImages,
 	})
 	component.Control.SetValue(player, component.NewPlayerControl())
-	component.Collision.SetValue(player, component.CollisionData{
-		Debug:     true,
-		Items:     []*resolv.Object{playerCollision},
-		TagsOrder: []string{"player"},
-	})
+	// component.Collision.SetValue(player, component.CollisionData{
+	// 	Debug:     true,
+	// 	Items:     []*resolv.Object{playerCollision},
+	// 	TagsOrder: []string{"player"},
+	// })
 	component.Ability.SetValue(player, component.NewAbility(raceInt))
 
 	return player

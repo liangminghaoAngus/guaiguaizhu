@@ -2,7 +2,9 @@ package scene
 
 import (
 	"bytes"
+	"image"
 	"io"
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/assets/sound"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
@@ -90,14 +92,20 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 		Volume:       10,
 	})
 
-	rookieMap := entity.NewRookieMap(world)
+	systemUI, _, _ := image.Decode(bytes.NewReader(assetImages.SystemUI))
+	// 添加系统 ui
+	gameC := component.Game.Get(parent)
+	gameC.SystemUI = ebiten.NewImageFromImage(systemUI)
+
+	// rookieMap := entity.NewRookieMap(world)
+	entity.NewRookieMap(world)
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)
 
 	// 将 player 添加至 rookie map bound
-	rSpace := component.CollisionSpace.Get(rookieMap)
-	pCollision := component.Collision.Get(player)
-	rSpace.Space.Add(pCollision.Items...)
+	// rSpace := component.CollisionSpace.Get(rookieMap)
+	// pCollision := component.Collision.Get(player)
+	// rSpace.Space.Add(pCollision.Items...)
 
 	return world
 }

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
 
@@ -12,8 +13,9 @@ import (
 )
 
 type Render struct {
-	query     *query.Query
-	offscreen *ebiten.Image
+	query        *query.Query
+	playerHealth *query.Query
+	offscreen    *ebiten.Image
 }
 
 func NewRender() *Render {
@@ -23,7 +25,8 @@ func NewRender() *Render {
 				filter.Contains(transform.Transform),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
 				filter.Not(filter.Contains(component.Map)))),
-		offscreen: ebiten.NewImage(3000, 3000),
+		playerHealth: query.NewQuery(filter.Contains(component.Health, component.Player)),
+		offscreen:    ebiten.NewImage(3000, 3000),
 	}
 	return r
 }
@@ -70,6 +73,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
 	gameData := component.MustFindGame(w)
 	var entries []*donburi.Entry
+
 	r.query.Each(w, func(entry *donburi.Entry) {
 		entries = append(entries, entry)
 		pos := transform.WorldPosition(entry)
@@ -129,6 +133,48 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		}
 
 	})
+
+	playerEntity, ok := r.playerHealth.First(w)
+
+	// 绘制 UI
+	{
+		x := screen.Bounds().Max.X/2 - gameData.SystemUI.Bounds().Dx()/2
+		y := screen.Bounds().Max.Y - gameData.SystemUI.Bounds().Dy()
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(x), float64(y))
+		screen.DrawImage(gameData.SystemUI, op)
+		if ok {
+			health := component.Health.Get(playerEntity)
+			{ // hp
+				hpImage := health.HPui
+				percent := float64(health.HP) / float64(health.HPMax)
+				x0 := 0
+				y0 := hpImage.Bounds().Dy()
+				x1 := hpImage.Bounds().Dx()
+				y1 := float64(hpImage.Bounds().Dy()) * (float64(1) - percent)
+
+				// fixX := hpImage.Bounds().Dx()
+
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
+				screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+			}
+			{ // mp
+				mpImage := health.MPui
+				percent := float64(health.MP) / float64(health.MPMax)
+				x0 := 0
+				y0 := mpImage.Bounds().Dy()
+				x1 := mpImage.Bounds().Dx()
+				y1 := float64(mpImage.Bounds().Dy()) * (float64(1) - percent)
+
+				transx := x + gameData.SystemUI.Bounds().Dx() - mpImage.Bounds().Dx()
+
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
+				screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+			}
+		}
+	}
 
 	//
 	if gameData.IsPlayerStoreOpen {
