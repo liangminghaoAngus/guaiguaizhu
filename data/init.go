@@ -19,10 +19,15 @@ func Init() {
 		db = con
 	}
 
-	if !db.Migrator().HasTable("ability") {
-		db.Migrator().CreateTable(Ability{})
+	tableList := map[string]interface{}{
+		"ability": Ability{},
+		"npc":     Npc{},
 	}
-
+	for table, structTable := range tableList {
+		if !db.Migrator().HasTable(table) {
+			db.Migrator().CreateTable(structTable)
+		}
+	}
 }
 
 func getDb() *gorm.DB {
