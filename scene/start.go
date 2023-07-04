@@ -3,9 +3,6 @@ package scene
 import (
 	"bytes"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
-	"github.com/yohamta/furex/v2"
 	"image"
 	"image/color"
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
@@ -14,6 +11,10 @@ import (
 	"liangminghaoangus/guaiguaizhu/scene/widgets"
 	"math"
 	"os"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/yohamta/furex/v2"
 )
 
 // StartScene game start scene
@@ -48,12 +49,13 @@ func (s *StartScene) Draw(screen *ebiten.Image) {
 
 	logoOp := &ebiten.DrawImageOptions{}
 	logoOp.GeoM.Translate(20, 20)
-	screen.DrawImage(ebiten.NewImageFromImage(logo), logoOp)
 
 	bgMax := bgImage.Bounds()
 	bgImageOp := &ebiten.DrawImageOptions{}
-	bgImageOp.GeoM.Scale(float64(screen.Bounds().Dx()/bgMax.Dx()), float64(screen.Bounds().Dy()/bgMax.Dy()))
+	scaleX, scaleY := float64(float64(screen.Bounds().Dx())/float64(bgMax.Dx())), float64(float64(screen.Bounds().Dy())/float64(bgMax.Dy()))
+	bgImageOp.GeoM.Scale(scaleX, scaleY)
 	screen.DrawImage(ebiten.NewImageFromImage(bgImage), bgImageOp)
+	screen.DrawImage(ebiten.NewImageFromImage(logo), logoOp)
 
 	s.gameUI.Draw(screen)
 }
