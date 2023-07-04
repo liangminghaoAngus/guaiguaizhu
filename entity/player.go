@@ -83,6 +83,8 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		TagsOrder: []string{"player"},
 	})
 	component.Ability.SetValue(player, component.NewAbility(raceInt))
+	store := component.MustFindStore(w)
+	store.DrawUI()
 
 	return player
 }

@@ -1,10 +1,13 @@
 package component
 
 import (
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/yohamta/donburi"
-	"image/color"
+	"github.com/yohamta/donburi/filter"
+	"github.com/yohamta/donburi/query"
 )
 
 type Index struct {
@@ -20,6 +23,7 @@ func NewIndex() *Index {
 }
 
 type StoreData struct {
+	MainUI        *ebiten.Image
 	Height, Width int
 	CapNum        int
 	CapItemIDMap  map[int]Index
@@ -53,9 +57,17 @@ var defaultStore = func() StoreData {
 
 var Store = donburi.NewComponentType[StoreData](defaultStore)
 
-func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
-	itemCeil := 20
-	borderSize := 1
+func MustFindStore(w donburi.World) *StoreData {
+	entry, ok := query.NewQuery(filter.Contains(Store, Player)).First(w)
+	if !ok {
+		panic("not store player")
+	}
+	return Store.Get(entry)
+}
+
+func (d *StoreData) DrawUI() {
+	itemCeil := 50
+	borderSize := 2
 	wpx, hpx := itemCeil*d.Width, itemCeil*d.Height
 	uiMain := ebiten.NewImage(wpx, hpx)
 	for i := 0; i < d.Height; i++ {
@@ -74,9 +86,14 @@ func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 			vector.DrawFilledRect(uiMain, float32(x)+float32(itemCeil-borderSize), float32(y), float32(borderSize), float32(itemCeil), color.Black, false) // Right border
 		}
 	}
+	d.MainUI = uiMain
+}
+
+func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
+	uiMain := d.MainUI
 
 	op := &ebiten.DrawImageOptions{}
-	x, y := float64(screen.Bounds().Dx()-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()-uiMain.Bounds().Dy()/2)
+	x, y := float64(screen.Bounds().Dx()/2-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()/2-uiMain.Bounds().Dy()/2)
 	op.GeoM.Translate(x, y)
 	// 居中绘制
 	screen.DrawImage(uiMain, op)

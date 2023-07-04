@@ -4,6 +4,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/component"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
@@ -79,7 +80,8 @@ func (m *Control) Update(w donburi.World) {
 		}
 
 		// storeOpen
-		if ebiten.IsKeyPressed(input.StoreKey) {
+
+		if inpututil.IsKeyJustPressed(input.StoreKey) {
 			gameData.IsPlayerStoreOpen = !gameData.IsPlayerStoreOpen
 		}
 	})
