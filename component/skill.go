@@ -1,10 +1,12 @@
 package component
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"sort"
+	"time"
 )
 
 type AbilityData struct {
@@ -12,11 +14,14 @@ type AbilityData struct {
 }
 
 type SkillItem struct {
+	Image     *ebiten.Image
 	Name      string
 	Info      string
+	CoolDown  time.Duration
 	CostHP    int
 	CostMP    int
 	NeedLevel int
+	Type      int
 	ID        int
 }
 
@@ -29,9 +34,18 @@ func (s *AbilityData) ListByLevel() []SkillItem {
 		res = append(res, i)
 	}
 	sort.Slice(res, func(i, j int) bool {
-		return res[i].NeedLevel < res[j].NeedLevel
+		if res[i].Type != res[j].Type {
+			return res[i].Type < res[j].Type
+		} else {
+			return res[i].NeedLevel < res[j].NeedLevel
+		}
 	})
 	return res
+}
+
+// todo
+func (s *AbilityData) DrawAbilityList(level int) *ebiten.Image {
+	return nil
 }
 
 func NewAbility(raceInt enums.Race) AbilityData {
