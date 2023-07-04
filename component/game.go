@@ -22,6 +22,8 @@ var Map = donburi.NewTag()
 
 var Player = donburi.NewTag()
 
+var Enemy = donburi.NewTag()
+
 func MustFindGame(w donburi.World) *GameData {
 	game, ok := query.NewQuery(filter.Contains(Game)).First(w)
 	if !ok {
