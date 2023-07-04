@@ -1,11 +1,16 @@
 package system
 
 import (
+	"bytes"
+	"fmt"
 	"image"
 	"image/color"
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/config"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
@@ -174,8 +179,22 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{
-				// level todo
-				level.LevelNum = level.LevelNum
+				percent := float64(level.Exp) / float64(level.ExpNextLevel)
+				img, _, _ := image.Decode(bytes.NewReader(assetImages.ExpBackground))
+				x0 := 0
+				y0 := img.Bounds().Dy()
+				x1 := img.Bounds().Dx()
+				y1 := float64(img.Bounds().Dy()) * (float64(1) - percent)
+				fixedY := float64(img.Bounds().Dy())
+
+				bgImg := ebiten.NewImageFromImage(img)
+				font := config.GetSystemFontSize(12)
+				bText := text.BoundString(font, fmt.Sprint(level.LevelNum))
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(x+health.HPui.Bounds().Dx()+11), float64(screen.Bounds().Max.Y)-float64(fixedY)-12+float64(y1))
+				// screen.DrawImage(bgImg, op)
+				screen.DrawImage(bgImg.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+				text.Draw(screen, fmt.Sprint(level.LevelNum), font, health.HPui.Bounds().Dx()+x+22-bText.Dx()/2, screen.Bounds().Max.Y-int(fixedY)+2, color.White)
 				// fmt.Println(level.LevelNum)
 			}
 		}

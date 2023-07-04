@@ -1,8 +1,9 @@
 package component
 
 import (
-	"github.com/yohamta/donburi"
 	"liangminghaoangus/guaiguaizhu/enums"
+
+	"github.com/yohamta/donburi"
 )
 
 type LevelData struct {
@@ -16,7 +17,8 @@ var Level = donburi.NewComponentType[LevelData](LevelData{})
 func NewLevelData(level int) LevelData {
 	nextLevelExp, _ := enums.GetLevelEXP(level)
 	return LevelData{
-		LevelNum: 1,
-		Exp:      nextLevelExp,
+		LevelNum:     1,
+		ExpNextLevel: nextLevelExp,
+		Exp:          0,
 	}
 }

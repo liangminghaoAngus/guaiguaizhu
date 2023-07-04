@@ -12,6 +12,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed power.png
+var PowerBackgroud []byte
+
+//go:embed exp.png
+var ExpBackground []byte
+
 //go:embed startBg.png
 var StartScreenImage []byte
 
