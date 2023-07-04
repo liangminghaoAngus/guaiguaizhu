@@ -22,7 +22,7 @@ var RookieMap = []donburi.IComponentType{
 	transform.Transform,
 	component.Sprite,
 	component.Map,
-	// component.CollisionSpace,
+	component.CollisionSpace,
 }
 
 func NewRookieMap(w donburi.World) *donburi.Entry {

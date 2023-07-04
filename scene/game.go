@@ -97,15 +97,15 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	gameC := component.Game.Get(parent)
 	gameC.SystemUI = ebiten.NewImageFromImage(systemUI)
 
-	// rookieMap := entity.NewRookieMap(world)
-	entity.NewRookieMap(world)
+	rookieMap := entity.NewRookieMap(world)
+	// entity.NewRookieMap(world)
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)
 
 	// 将 player 添加至 rookie map bound
-	// rSpace := component.CollisionSpace.Get(rookieMap)
-	// pCollision := component.Collision.Get(player)
-	// rSpace.Space.Add(pCollision.Items...)
+	rSpace := component.CollisionSpace.Get(rookieMap)
+	pCollision := component.Collision.Get(player)
+	rSpace.Space.AddObject(pCollision.Items...)
 
 	return world
 }

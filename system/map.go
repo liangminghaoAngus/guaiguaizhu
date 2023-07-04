@@ -6,6 +6,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"math"
 	"strconv"
 	"strings"
 
@@ -41,18 +42,30 @@ func (m *Map) Update(w donburi.World) {
 			y, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", y), 64)
 			if happen := item.Check(x, y); happen != nil {
 				c := happen.Objects[0]
-				rawX, rawY := x-c.Position.X, y-c.Position.Y
-				if rawX > 0 {
-					position.X = c.Position.X - 1
+				// rawX, rawY := x-c.Position.X, y-c.Position.Y
+				// engine.SeparateRectangles(item, c)
+				if position.X < 0 {
+					position.X = math.Abs(float64(c.Position.X + c.Width/2 - item.Width/2))
+				} else if position.X > 0 && position.X+item.Width > item.Space.Width {
+					position.X = item.Space.Width - item.Width - 10
 				} else {
-					position.X = c.Position.X + 1
+					position.X = math.Abs(float64(c.Position.X + c.Width/2 - item.Width/2))
 				}
 
-				if rawY > 0 {
-					position.Y = c.Position.Y - 1
-				} else {
-					position.Y = c.Position.Y + 1
-				}
+				// position.Y = math.Abs(c.Position.Y + c.Height/2 - item.Height/2)
+
+				// position.Y = item.Position.Y
+				// if rawX > 0 {
+				// 	position.X = (c.Position.X - c.Width) - 1
+				// } else {
+				// 	position.X = (c.Position.X + c.Width) + 1
+				// }
+
+				// if rawY > 0 {
+				// 	position.Y = (c.Position.Y - c.Height) - 1
+				// } else {
+				// 	position.Y = (c.Position.Y + c.Height) + 1
+				// }
 			}
 		}
 

@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
@@ -176,7 +175,8 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			}
 			{
 				// level todo
-				fmt.Println(level.LevelNum)
+				level.LevelNum = level.LevelNum
+				// fmt.Println(level.LevelNum)
 			}
 		}
 	}

@@ -6,7 +6,7 @@ type Point struct {
 
 type Object struct {
 	Position Point
-	space    *Space
+	Space    *Space
 	Width    float64
 	Height   float64
 	Targets  []string
@@ -27,8 +27,8 @@ func (o *Object) Check(x, y float64) *Collision {
 	tmp.Position.X = x
 	tmp.Position.Y = y
 
-	if o.space != nil {
-		for _, object := range o.space.Objects {
+	if o.Space != nil {
+		for _, object := range o.Space.Objects {
 			item := object
 			if object == o { // 同一个元素忽略
 				continue
@@ -56,7 +56,7 @@ type Space struct {
 func (s *Space) AddObject(objects ...*Object) {
 	s.Objects = append(s.Objects, objects...)
 	for ind := range objects {
-		objects[ind].space = s
+		objects[ind].Space = s
 	}
 }
 
@@ -89,4 +89,34 @@ func checkCollision(obj1, obj2 Object) bool {
 		return true
 	}
 	return false
+}
+
+func SeparateRectangles(rect1, rect2 *Object) {
+	dx := (rect1.Position.X + rect1.Width/2) - (rect2.Position.X + rect2.Width/2)
+	dy := (rect1.Position.Y + rect1.Height/2) - (rect2.Position.Y + rect2.Height/2)
+
+	if dx < 0 {
+		dx = -dx
+	}
+	if dy < 0 {
+		dy = -dy
+	}
+
+	if dx > dy {
+		if rect1.Position.X < rect2.Position.X {
+			rect1.Position.X -= dx
+			// rect2.Position.X += dx
+		} else {
+			rect1.Position.X += dx
+			// rect2.Position.X -= dx
+		}
+	} else {
+		if rect1.Position.Y < rect2.Position.Y {
+			rect1.Position.Y -= dy
+			// rect2.Position.Y += dy
+		} else {
+			rect1.Position.Y += dy
+			// rect2.Position.Y -= dy
+		}
+	}
 }
