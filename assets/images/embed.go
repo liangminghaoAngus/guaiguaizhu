@@ -12,6 +12,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed startBg.png
+var StartScreenImage []byte
+
+//go:embed logo.png
+var StartScreenLogo []byte
+
 //go:embed ui/ui.png
 var SystemUI []byte
 

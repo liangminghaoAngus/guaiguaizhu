@@ -43,6 +43,18 @@ func (s *StartScene) Update() {
 }
 
 func (s *StartScene) Draw(screen *ebiten.Image) {
+	logo, _, _ := image.Decode(bytes.NewReader(assetsImage.StartScreenLogo))
+	bgImage, _, _ := image.Decode(bytes.NewReader(assetsImage.StartScreenImage))
+
+	logoOp := &ebiten.DrawImageOptions{}
+	logoOp.GeoM.Translate(20, 20)
+	screen.DrawImage(ebiten.NewImageFromImage(logo), logoOp)
+
+	bgMax := bgImage.Bounds()
+	bgImageOp := &ebiten.DrawImageOptions{}
+	bgImageOp.GeoM.Scale(float64(screen.Bounds().Dx()/bgMax.Dx()), float64(screen.Bounds().Dy()/bgMax.Dy()))
+	screen.DrawImage(ebiten.NewImageFromImage(bgImage), bgImageOp)
+
 	s.gameUI.Draw(screen)
 }
 
