@@ -3,6 +3,7 @@ package component
 import (
 	"image"
 	"liangminghaoangus/guaiguaizhu/engine"
+	"liangminghaoangus/guaiguaizhu/enums"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -28,8 +29,8 @@ type HealthData struct {
 	HPui    *ebiten.Image // 判断是否需要定制 HP 界面
 	MPui    *ebiten.Image
 
-	AnimationTime time.Duration
-	//LastAnimationTime map[AnimateHealthItem]time.Time
+	AnimationTime     time.Duration
+	LastAnimationTime map[AnimateHealthItem]time.Time
 	LastAnimationItem map[AnimateHealthItem]int
 
 	JustDamage           bool
@@ -40,8 +41,8 @@ type HealthData struct {
 var Health = donburi.NewComponentType[HealthData](HealthData{
 	DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
 	AnimationTime:        time.Second * 1,
-	//LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
-	LastAnimationItem: make(map[AnimateHealthItem]int),
+	LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+	LastAnimationItem:    make(map[AnimateHealthItem]int),
 })
 
 func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
@@ -55,8 +56,8 @@ func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
 		JustDamage:           false,
 		AnimationTime:        time.Second * 1,
 		DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
-		//LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
-		LastAnimationItem: make(map[AnimateHealthItem]int),
+		LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+		LastAnimationItem:    make(map[AnimateHealthItem]int),
 	}
 }
 
@@ -101,3 +102,54 @@ func (d *HealthData) DrawPlayerMPImage(screen, mpUI *ebiten.Image, x, y int, mp 
 	op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
 	screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 }
+
+type HealData struct {
+	level int
+
+	itemNums map[AnimateHealthItem]int
+	itemHeal map[AnimateHealthItem]int
+}
+
+func (d *HealData) AddItem(hp, mp int) {
+	d.itemNums[AnimateHp] += hp
+	d.itemNums[AnimateMp] += mp
+}
+
+func (d *HealData) LevelUp() {
+	d.level++
+	for item := range d.itemHeal {
+		d.itemHeal[item] = enums.HealItemLevel[d.level]
+	}
+}
+
+func (d *HealData) UseHP() int {
+	if count, ok := d.itemNums[AnimateHp]; ok && count > 0 {
+		if value, ok := d.itemHeal[AnimateHp]; ok {
+			return value
+		}
+	}
+	return 0
+}
+
+func (d *HealData) UseMP() int {
+	if count, ok := d.itemNums[AnimateMp]; ok && count > 0 {
+		if value, ok := d.itemHeal[AnimateMp]; ok {
+			return value
+		}
+	}
+	return 0
+}
+
+var defaultHealData = HealData{
+	level: 1,
+	itemNums: map[AnimateHealthItem]int{
+		AnimateHp: 1,
+		AnimateMp: 1,
+	},
+	itemHeal: map[AnimateHealthItem]int{
+		AnimateHp: enums.HealItemLevel[1],
+		AnimateMp: enums.HealItemLevel[1],
+	},
+}
+
+var Heal = donburi.NewComponentType[HealData](defaultHealData)
