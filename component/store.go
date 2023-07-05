@@ -76,8 +76,6 @@ func (d *StoreData) DrawUI() {
 			x := i * itemCeil
 			y := j * itemCeil
 
-			// todo draw item with drag & drop
-
 			// Draw a border around each item
 			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(itemCeil), float32(borderSize), color.Black, false)
 			vector.DrawFilledRect(uiMain, float32(x), float32(y)+float32(itemCeil-borderSize), float32(itemCeil), float32(borderSize), color.Black, false) // Bottom border
@@ -91,6 +89,8 @@ func (d *StoreData) DrawUI() {
 
 func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 	uiMain := d.MainUI
+
+	// draw Item backpack todo
 
 	op := &ebiten.DrawImageOptions{}
 	x, y := float64(screen.Bounds().Dx()/2-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()/2-uiMain.Bounds().Dy()/2)

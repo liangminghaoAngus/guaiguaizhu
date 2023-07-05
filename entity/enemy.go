@@ -28,5 +28,7 @@ func NewEnemyEntity(w donburi.World, enemyID int, num int) []*donburi.Entity {
 	fmt.Println(enemyEntitys)
 	//player := w.Entry(playerEntity)
 
+	// todo get enemy info from data
+
 	return entitys
 }
