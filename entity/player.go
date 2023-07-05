@@ -65,7 +65,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
 	component.Level.SetValue(player, component.NewLevelData(playerLevel))
 	component.Movement.SetValue(player, component.NewMovementData())
-	component.Position.SetValue(player, component.NewPositionData())
+	component.Position.SetValue(player, component.NewPlayerPositionData())
 	component.SpriteStand.SetValue(player, component.SpriteStandData{
 		IsDirectionRight: true,
 		Disabled:         false,
