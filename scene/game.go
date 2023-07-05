@@ -49,11 +49,12 @@ func NewGame(raceInt enums.Race) *Game {
 func (g *Game) initGame(raceInt enums.Race) {
 	render := system.NewRender()
 	mapRender := system.NewMap(enums.MapRookie)
-	// todo append system
+
 	g.systems = []System{
 		render,
 		system.NewControl(),
 		system.NewSound(),
+		system.NewHeath(),
 		mapRender,
 	}
 
@@ -70,11 +71,9 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
 	parent := world.Entry(world.Create(component.Game, transform.Transform))
 	transform.SetWorldPosition(parent, math.Vec2{X: 0, Y: 300})
-	// transform.SetWorldScale(parent, math.Vec2{X: 2, Y: 3})
 
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
-	// todo need to do switch music
 	sampleRate := 11025
 	s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
 	if err != nil {
