@@ -8,6 +8,7 @@ import (
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/config"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -76,6 +77,7 @@ func (r *Render) Update(w donburi.World) {
 
 func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
+	nowTime := time.Now()
 	gameData := component.MustFindGame(w)
 	var entries []*donburi.Entry
 
@@ -151,18 +153,27 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			health := component.Health.Get(playerEntity)
 			level := component.Level.Get(playerEntity)
 			{ // hp
-				hpImage := health.HPui
-				percent := float64(health.HP) / float64(health.HPMax)
-				x0 := 0
-				y0 := hpImage.Bounds().Dy()
-				x1 := hpImage.Bounds().Dx()
-				y1 := float64(hpImage.Bounds().Dy()) * (float64(1) - percent)
 
-				// fixX := hpImage.Bounds().Dx()
+				health.DrawPlayerHPImage(screen, health.HPui, x, y, health.HP, 1)
+				// get last time hp info ,do draw
+				lastTimeHP, ok := health.LastAnimationItem[component.AnimateHp]
+				animateTime := health.AnimationTime
+				if elapsed := time.Since(nowTime); elapsed.Seconds() < animateTime.Seconds() && ok {
+					// 绘制上一次的内容
+					health.DrawPlayerHPImage(screen, health.HPui, x, y, lastTimeHP, 0.65)
+				}
 
-				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
-				screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+				//hpImage := health.HPui
+				//percent := float64(health.HP) / float64(health.HPMax)
+				//x0 := 0
+				//y0 := hpImage.Bounds().Dy()
+				//x1 := hpImage.Bounds().Dx()
+				//y1 := float64(hpImage.Bounds().Dy()) * (float64(1) - percent)
+				//
+				//
+				//op := &ebiten.DrawImageOptions{}
+				//op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
+				//screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{ // mp
 				mpImage := health.MPui

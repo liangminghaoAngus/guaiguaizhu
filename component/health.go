@@ -1,12 +1,20 @@
 package component
 
 import (
+	"image"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/math"
+)
+
+type AnimateHealthItem int
+
+const (
+	AnimateHp AnimateHealthItem = iota + 1
+	AnimateMp
 )
 
 type HealthData struct {
@@ -20,6 +28,10 @@ type HealthData struct {
 	HPui    *ebiten.Image // 判断是否需要定制 HP 界面
 	MPui    *ebiten.Image
 
+	AnimationTime     time.Duration
+	LastAnimationTime map[AnimateHealthItem]time.Time
+	LastAnimationItem map[AnimateHealthItem]int
+
 	JustDamage           bool
 	DamageIndicatorTimer *engine.Timer
 	//DamageIndicator      *SpriteData
@@ -27,6 +39,9 @@ type HealthData struct {
 
 var Health = donburi.NewComponentType[HealthData](HealthData{
 	DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
+	AnimationTime:        time.Second * 1,
+	LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+	LastAnimationItem:    make(map[AnimateHealthItem]int),
 })
 
 func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
@@ -38,6 +53,29 @@ func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
 		MPMax:                100,
 		MPui:                 mp,
 		JustDamage:           false,
+		AnimationTime:        time.Second * 1,
 		DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
+		LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+		LastAnimationItem:    make(map[AnimateHealthItem]int),
 	}
+}
+
+func (d *HealthData) ChangeHP(targetHP int, nowTime time.Time) {
+	d.LastAnimationItem[AnimateHp] = d.HP
+	d.LastAnimationTime[AnimateHp] = nowTime
+	d.HP = targetHP
+}
+
+func (d *HealthData) DrawPlayerHPImage(screen, hpUI *ebiten.Image, x, y int, hp int, a float32) {
+	hpImage := hpUI
+	percent := float64(hp) / float64(d.HPMax)
+	x0 := 0
+	y0 := hpImage.Bounds().Dy()
+	x1 := hpImage.Bounds().Dx()
+	y1 := float64(hpImage.Bounds().Dy()) * (float64(1) - percent)
+
+	op := &ebiten.DrawImageOptions{}
+	op.ColorScale.SetA(a)
+	op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
+	screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 }
