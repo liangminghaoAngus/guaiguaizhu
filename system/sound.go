@@ -14,7 +14,7 @@ type Sound struct {
 
 func NewSound() *Sound {
 	return &Sound{
-		query: query.NewQuery(filter.Contains(component.Sound)),
+		query: query.NewQuery(filter.And(filter.Contains(component.Sound), filter.Not(filter.Contains(component.BgSound)))),
 	}
 }
 
@@ -25,10 +25,12 @@ func (s *Sound) Update(w donburi.World) {
 		if sound.Paused {
 			sound.AudioPlayer.Pause()
 			return
+		} else {
+			if !sound.AudioPlayer.IsPlaying() && sound.Loop {
+				_ = sound.AudioPlayer.Rewind()
+			}
 		}
-		if sound.AudioPlayer.Current() == sound.Total && sound.Loop {
-			_ = sound.AudioPlayer.Seek(0)
-		}
+
 		sound.AudioPlayer.SetVolume(float64(sound.Volume))
 		sound.AudioPlayer.Play()
 	})

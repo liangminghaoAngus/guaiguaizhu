@@ -121,7 +121,12 @@ func (g *Game) Update() {
 	// pause game
 	if inpututil.IsKeyJustPressed(gameData.PauseKey) {
 		gameData.Pause = !gameData.Pause
-		bgSound.Paused = !bgSound.Paused
+		bgSound.AudioPlayer.Pause()
+	} else {
+		if !bgSound.AudioPlayer.IsPlaying() {
+			_ = bgSound.AudioPlayer.Rewind()
+			bgSound.AudioPlayer.Play()
+		}
 	}
 
 	// save game
