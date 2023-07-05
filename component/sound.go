@@ -9,9 +9,9 @@ import (
 )
 
 type SoundData struct {
-	Paused       bool
-	Loop         bool
-	Mp3Byte      []byte
+	Paused bool
+	Loop   bool
+	//Mp3Byte      []byte
 	Total        time.Duration
 	AudioContext *audio.Context
 	AudioPlayer  *audio.Player

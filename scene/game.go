@@ -4,6 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
+	"github.com/yohamta/donburi/features/transform"
 	"image"
 	"io"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
@@ -14,15 +21,6 @@ import (
 	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/system"
-	"time"
-
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/math"
-	"github.com/yohamta/donburi/features/transform"
 )
 
 type System interface {
@@ -74,25 +72,19 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
-	sampleRate := 11025
-	s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
-	if err != nil {
-		println("music err")
-	}
-	audioContext := audio.NewContext(11025)
-	m, err := io.ReadAll(s)
-	if err != nil {
-		println("music err")
-	}
-	p := audioContext.NewPlayerFromBytes(m)
-	component.Sound.SetValue(soundEntity, component.SoundData{
-		Loop:         true,
-		Total:        time.Second * time.Duration(s.Length()) / time.Duration(sampleRate),
-		AudioContext: audioContext,
-		AudioPlayer:  p,
-		Mp3Byte:      sound.Intro,
-		Volume:       10,
-	})
+	soundData := ChangeMusic("body")
+	//sampleRate := 11025
+	//s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
+	//if err != nil {
+	//	println("music err")
+	//}
+	//audioContext := audio.NewContext(11025)
+	//m, err := io.ReadAll(s)
+	//if err != nil {
+	//	println("music err")
+	//}
+	//p := audioContext.NewPlayerFromBytes(m)
+	component.Sound.SetValue(soundEntity, *soundData)
 
 	systemUI, _, _ := image.Decode(bytes.NewReader(assetImages.SystemUI))
 	// 添加系统 ui
@@ -228,4 +220,34 @@ func marshalComponentData(componentData interface{}) (string, error) {
 		return "", err
 	}
 	return string(raw), nil
+}
+
+func ChangeMusic(screen string) *component.SoundData {
+	mp3Byte := []byte("")
+	switch screen {
+	case "body":
+		mp3Byte = sound.Body
+	case "intro":
+		mp3Byte = sound.Intro
+	case "boss":
+		mp3Byte = sound.Boss
+	}
+	sampleRate := 11025
+	s, err := wav.DecodeWithoutResampling(bytes.NewReader(mp3Byte))
+	if err != nil {
+		println("music err")
+	}
+	audioContext := audio.NewContext(sampleRate)
+	m, err := io.ReadAll(s)
+	if err != nil {
+		println("music err")
+	}
+	p := audioContext.NewPlayerFromBytes(m)
+	return &component.SoundData{
+		Loop:         true,
+		AudioContext: audioContext,
+		AudioPlayer:  p,
+		//Mp3Byte:      mp3Byte,
+		Volume: 10,
+	}
 }
