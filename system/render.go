@@ -77,7 +77,7 @@ func (r *Render) Update(w donburi.World) {
 
 func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
-	nowTime := time.Now()
+	//nowTime := time.Now()
 	gameData := component.MustFindGame(w)
 	var entries []*donburi.Entry
 
@@ -156,8 +156,9 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				health.DrawPlayerHPImage(screen, health.HPui, x, y, health.HP, 1)
 				// get last time hp info ,do draw
 				lastTimeHP, ok := health.LastAnimationItem[component.AnimateHp]
+				lastTime, ok := health.LastAnimationTime[component.AnimateHp]
 				animateTime := health.AnimationTime
-				if elapsed := time.Since(nowTime); elapsed.Seconds() < animateTime.Seconds() && ok {
+				if elapsed := time.Since(lastTime); elapsed.Seconds() < animateTime.Seconds() && ok {
 					// 绘制上一次的内容
 					health.DrawPlayerHPImage(screen, health.HPui, x, y, lastTimeHP, 0.65)
 				}
@@ -178,8 +179,9 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, health.MP, 1)
 				// get last time hp info ,do draw
 				lastTimeMP, ok := health.LastAnimationItem[component.AnimateMp]
+				lastTime, ok := health.LastAnimationTime[component.AnimateMp]
 				animateTime := health.AnimationTime
-				if elapsed := time.Since(nowTime); elapsed.Seconds() < animateTime.Seconds() && ok {
+				if elapsed := time.Since(lastTime); elapsed.Seconds() < animateTime.Seconds() && ok {
 					// 绘制上一次的内容
 					health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, lastTimeMP, 0.65)
 				}
