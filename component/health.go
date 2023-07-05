@@ -28,8 +28,8 @@ type HealthData struct {
 	HPui    *ebiten.Image // 判断是否需要定制 HP 界面
 	MPui    *ebiten.Image
 
-	AnimationTime     time.Duration
-	LastAnimationTime map[AnimateHealthItem]time.Time
+	AnimationTime time.Duration
+	//LastAnimationTime map[AnimateHealthItem]time.Time
 	LastAnimationItem map[AnimateHealthItem]int
 
 	JustDamage           bool
@@ -40,8 +40,8 @@ type HealthData struct {
 var Health = donburi.NewComponentType[HealthData](HealthData{
 	DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
 	AnimationTime:        time.Second * 1,
-	LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
-	LastAnimationItem:    make(map[AnimateHealthItem]int),
+	//LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+	LastAnimationItem: make(map[AnimateHealthItem]int),
 })
 
 func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
@@ -55,15 +55,21 @@ func NewPlayerHealthData(hp, mp *ebiten.Image) HealthData {
 		JustDamage:           false,
 		AnimationTime:        time.Second * 1,
 		DamageIndicatorTimer: engine.NewTimer(time.Millisecond * 100),
-		LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
-		LastAnimationItem:    make(map[AnimateHealthItem]int),
+		//LastAnimationTime:    make(map[AnimateHealthItem]time.Time),
+		LastAnimationItem: make(map[AnimateHealthItem]int),
 	}
 }
 
 func (d *HealthData) ChangeHP(targetHP int, nowTime time.Time) {
 	d.LastAnimationItem[AnimateHp] = d.HP
-	d.LastAnimationTime[AnimateHp] = nowTime
+	//d.LastAnimationTime[AnimateHp] = nowTime
 	d.HP = targetHP
+}
+
+func (d *HealthData) ChangeMP(targetMP int, nowTime time.Time) {
+	d.LastAnimationItem[AnimateMp] = d.MP
+	//d.LastAnimationTime[AnimateMp] = nowTime
+	d.MP = targetMP
 }
 
 func (d *HealthData) DrawPlayerHPImage(screen, hpUI *ebiten.Image, x, y int, hp int, a float32) {
@@ -78,4 +84,20 @@ func (d *HealthData) DrawPlayerHPImage(screen, hpUI *ebiten.Image, x, y int, hp 
 	op.ColorScale.SetA(a)
 	op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
 	screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+}
+
+func (d *HealthData) DrawPlayerMPImage(screen, mpUI *ebiten.Image, x, y int, mp int, a float32) {
+	mpImage := mpUI
+	percent := float64(mp) / float64(d.MPMax)
+	x0 := 0
+	y0 := mpImage.Bounds().Dy()
+	x1 := mpImage.Bounds().Dx()
+	y1 := float64(mpImage.Bounds().Dy()) * (float64(1) - percent)
+
+	transx := x - mpImage.Bounds().Dx()
+
+	op := &ebiten.DrawImageOptions{}
+	op.ColorScale.SetA(a)
+	op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
+	screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 }

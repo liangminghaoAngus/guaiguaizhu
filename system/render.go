@@ -153,7 +153,6 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			health := component.Health.Get(playerEntity)
 			level := component.Level.Get(playerEntity)
 			{ // hp
-
 				health.DrawPlayerHPImage(screen, health.HPui, x, y, health.HP, 1)
 				// get last time hp info ,do draw
 				lastTimeHP, ok := health.LastAnimationItem[component.AnimateHp]
@@ -176,18 +175,26 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				//screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{ // mp
-				mpImage := health.MPui
-				percent := float64(health.MP) / float64(health.MPMax)
-				x0 := 0
-				y0 := mpImage.Bounds().Dy()
-				x1 := mpImage.Bounds().Dx()
-				y1 := float64(mpImage.Bounds().Dy()) * (float64(1) - percent)
-
-				transx := x + gameData.SystemUI.Bounds().Dx() - mpImage.Bounds().Dx()
-
-				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
-				screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
+				health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, health.MP, 1)
+				// get last time hp info ,do draw
+				lastTimeMP, ok := health.LastAnimationItem[component.AnimateMp]
+				animateTime := health.AnimationTime
+				if elapsed := time.Since(nowTime); elapsed.Seconds() < animateTime.Seconds() && ok {
+					// 绘制上一次的内容
+					health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, lastTimeMP, 0.65)
+				}
+				//mpImage := health.MPui
+				//percent := float64(health.MP) / float64(health.MPMax)
+				//x0 := 0
+				//y0 := mpImage.Bounds().Dy()
+				//x1 := mpImage.Bounds().Dx()
+				//y1 := float64(mpImage.Bounds().Dy()) * (float64(1) - percent)
+				//
+				//transx := x + gameData.SystemUI.Bounds().Dx() - mpImage.Bounds().Dx()
+				//
+				//op := &ebiten.DrawImageOptions{}
+				//op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
+				//screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{
 				percent := float64(level.Exp) / float64(level.ExpNextLevel)
