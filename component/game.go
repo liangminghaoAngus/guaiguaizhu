@@ -10,13 +10,24 @@ import (
 
 type GameData struct {
 	Pause             bool
+	PauseKey          ebiten.Key
+	SaveGameID        int
+	SaveGameKey       [2]ebiten.Key
 	SystemUI          *ebiten.Image
 	IsPlayerStoreOpen bool
-	SaveData          []interface{}
-	ConfigData        config.Config
+
+	ConfigData *config.Config
 }
 
-var Game = donburi.NewComponentType[GameData](GameData{})
+func IsNewGame(gameData GameData) bool {
+	return gameData.SaveGameID <= 0
+}
+
+var Game = donburi.NewComponentType[GameData](GameData{
+	PauseKey:    ebiten.KeyEscape,
+	SaveGameKey: [2]ebiten.Key{ebiten.KeyControl, ebiten.KeyS},
+	ConfigData:  config.GetConfig(),
+})
 
 var Map = donburi.NewTag()
 

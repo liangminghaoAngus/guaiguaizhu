@@ -2,6 +2,8 @@ package entity
 
 import (
 	"bytes"
+	"github.com/yohamta/donburi/filter"
+	"github.com/yohamta/donburi/query"
 	"image"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
@@ -87,4 +89,12 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	store.DrawUI()
 
 	return player
+}
+
+func MustFindPlayerEntry(w donburi.World) *donburi.Entry {
+	entry, ok := query.NewQuery(filter.Contains(PlayerEntity...)).First(w)
+	if ok {
+		return entry
+	}
+	return nil
 }
