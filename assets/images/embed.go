@@ -12,6 +12,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed npc
+var NpcImagesDir embed.FS
+
+var NpcImages = make(map[string]*ebiten.Image)
+
 //go:embed power.png
 var PowerBackgroud []byte
 
@@ -175,5 +180,20 @@ func Init() {
 		HumanMovementLeftImgs[index] = ebiten.NewImageFromImage(newImage)
 
 		HumanMovementRightImgs[index] = ebiten.NewImageFromImage(i)
+	}
+
+	npcDirEntry, err := NpcImagesDir.ReadDir("npc")
+	if err != nil {
+		panic(err)
+	}
+	for _, entry := range npcDirEntry {
+		imageName := entry.Name()
+		split := strings.Split(imageName, ".")
+		filePath := path.Join("npc", imageName)
+		raw, _ := NpcImagesDir.ReadFile(filePath)
+		i, _, _ := image.Decode(bytes.NewReader(raw))
+		if len(split) == 2 {
+			NpcImages[split[0]] = ebiten.NewImageFromImage(i)
+		}
 	}
 }
