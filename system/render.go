@@ -24,6 +24,9 @@ type Render struct {
 	offscreen *ebiten.Image
 }
 
+var implCount = 10
+var countFrame = 0
+
 func NewRender() *Render {
 	r := &Render{
 		query: query.NewQuery(
@@ -68,6 +71,15 @@ func (r *Render) Update(w donburi.World) {
 				}
 			} else {
 				move.Count = 0 // 重置动画
+			}
+		}
+
+		if entry.HasComponent(component.WeaponHandler) {
+			weaponHand := component.WeaponHandler.Get(entry)
+			countFrame++
+			if countFrame >= implCount {
+				countFrame = 0
+				weaponHand.Angle += 5
 			}
 		}
 
@@ -124,6 +136,15 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
 				screen.DrawImage(targetImage, op)
 			}
+		}
+
+		if entry.HasComponent(component.WeaponHandler) {
+			weaponHand := component.WeaponHandler.Get(entry)
+			drawX, drawY := weaponHand.GetRenderPoint().X+position.X+pos.X, weaponHand.GetRenderPoint().Y+position.Y+pos.Y
+			ops := &ebiten.DrawImageOptions{}
+			ops.GeoM.Rotate(weaponHand.Angle)
+			ops.GeoM.Translate(drawX, drawY)
+			screen.DrawImage(weaponHand.Image, ops)
 		}
 
 		if entry.HasComponent(component.SpriteStand) && entry.HasComponent(component.Position) {

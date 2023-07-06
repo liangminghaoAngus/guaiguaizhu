@@ -3,6 +3,7 @@ package entity
 import (
 	"bytes"
 	"image"
+	"image/color"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/engine"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 )
 
@@ -32,6 +34,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Control,
 	component.Collision,
 	component.Store,
+	component.WeaponHandler,
 }
 
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
@@ -91,6 +94,15 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	component.Ability.SetValue(player, component.NewAbility(raceInt))
 	store := component.MustFindStore(w)
 	store.DrawUI()
+
+	armer := ebiten.NewImage(20, 40)
+	armer.Fill(color.Black)
+	component.WeaponHandler.SetValue(player, component.WeaponHandlerData{
+		Image:  armer,
+		Point:  math.NewVec2(20, 20),
+		Width:  float64(armer.Bounds().Dx()),
+		Height: float64(armer.Bounds().Dy()),
+	})
 
 	return player
 }

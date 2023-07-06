@@ -1,11 +1,11 @@
 package component
 
 import (
-	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi/features/math"
 	"image/color"
 	"testing"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi/features/math"
 )
 
 type TestGame struct {
@@ -58,17 +58,9 @@ func TestWeaponHandlerData_GetRenderPoint(t *testing.T) {
 		Width:  float64(hand.Bounds().Dx()),
 		Height: float64(hand.Bounds().Dy()),
 	}
-	handImg, op := item.GetRenderImage()
-	fmt.Println(handImg, op)
-	item.Angle += 5
-	handImg, op = item.GetRenderImage()
-	fmt.Println(handImg, op)
-	item.Angle += 5
-	handImg, op = item.GetRenderImage()
-	fmt.Println(handImg, op)
-	fmt.Println()
-	//if err := ebiten.RunGame(&TestGame{item: item, CountDelay: 10}); err != nil {
-	//	log.Fatal(err)
-	//}
+
+	if err := ebiten.RunGame(&TestGame{item: item, CountDelay: 10}); err != nil {
+		t.Log(err)
+	}
 	//t.Log("")
 }

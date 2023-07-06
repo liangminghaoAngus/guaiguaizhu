@@ -1,9 +1,12 @@
 package component
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi/features/math"
+	"fmt"
 	systemMath "math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
 )
 
 type WeaponHandlerData struct {
@@ -24,15 +27,22 @@ type WeaponData struct {
 	Width, Height float64
 }
 
+var WeaponHandler = donburi.NewComponentType[WeaponHandlerData](WeaponHandlerData{})
+
 func (we *WeaponHandlerData) GetRenderPoint() math.Vec2 {
-	return calculatePoint(we.Point, 0, we.Height/2)
+	width := we.Width / 2
+	// height := we.Height
+	// c := systemMath.Sqrt(width*width + height*height)
+	p1 := RotatePoint(math.Vec2{X: we.Point.X - width, Y: we.Point.Y}, we.Point, we.Angle)
+	fmt.Println(p1)
+	return p1
 }
 
 func (we *WeaponHandlerData) GetRenderImage() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(-we.Width/2, -we.Height/2)
+	// op.GeoM.Translate(-we.Width/2, -we.Height/2)
 	imgPoint := we.GetRenderPoint()
-	tranX, tranY := we.Width/2+imgPoint.X, we.Height/2+imgPoint.Y
+	tranX, tranY := imgPoint.X, imgPoint.Y
 	op.GeoM.Rotate(we.Angle)
 	op.GeoM.Translate(tranX, tranY)
 	return we.Image, op
@@ -44,16 +54,27 @@ func (we *WeaponHandlerData) GetWeaponBox() (point math.Vec2, angle float64, w, 
 	return math.Vec2{}, 0, 0, 0
 }
 
-func calculateWH(angle float64, width, length float64) (w, h float64) {
-	radians := angle * (systemMath.Pi / 180.0)
-	w = width * systemMath.Cos(radians)
-	h = length * systemMath.Sin(radians)
-	return w, h
-}
+func RotatePoint(p, center math.Vec2, angle float64) math.Vec2 {
+	// Convert the angle to radians
+	angleRad := angle * systemMath.Pi / 180.0
 
-func calculatePoint(start math.Vec2, angle float64, length float64) math.Vec2 {
-	radians := angle * (systemMath.Pi / 180.0)
-	x := start.X - length*systemMath.Cos(radians)
-	y := start.Y - length*systemMath.Sin(radians)
-	return math.Vec2{X: x, Y: y}
+	// Translate the point to the origin
+	translatedPoint := math.Vec2{
+		X: p.X - center.X,
+		Y: p.Y - center.Y,
+	}
+
+	// Rotate the translated point around the origin
+	rotatedPoint := math.Vec2{
+		X: translatedPoint.X*systemMath.Cos(angleRad) - translatedPoint.Y*systemMath.Sin(angleRad),
+		Y: translatedPoint.X*systemMath.Sin(angleRad) + translatedPoint.Y*systemMath.Cos(angleRad),
+	}
+
+	// Translate the rotated point back to its original position
+	finalPoint := math.Vec2{
+		X: rotatedPoint.X + center.X,
+		Y: rotatedPoint.Y + center.Y,
+	}
+
+	return finalPoint
 }
