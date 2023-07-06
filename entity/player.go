@@ -18,6 +18,7 @@ import (
 
 var PlayerEntity = []donburi.IComponentType{
 	component.Player,
+	component.Attribute,
 	transform.Transform,
 	component.Health,
 	component.Heal,
@@ -37,7 +38,8 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	if name := enums.GetRaceName(raceInt); name == "" {
 		panic("unknow race")
 	}
-	// todo 设计 player 的模型
+
+	playerPositionX, playerPositionY := 20, 20
 	playerH, playerW := 80, 50
 	playerLevel := 1
 
@@ -62,11 +64,11 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 
 	playerEntity := w.Create(PlayerEntity...)
 	player := w.Entry(playerEntity)
-	playerCollision := engine.NewObject(20, 20, float64(playerW), float64(playerH), "player")
+	playerCollision := engine.NewObject(float64(playerPositionX), float64(playerPositionY), float64(playerW), float64(playerH), "player")
 	component.Health.SetValue(player, component.NewPlayerHealthData(hp, mp))
 	component.Race.SetValue(player, component.NewRaceData(raceInt))
 	component.Level.SetValue(player, component.NewLevelData(playerLevel))
-	component.Movement.SetValue(player, component.NewMovementData())
+	//component.Movement.SetValue(player, component.NewMovementData())
 	component.Position.SetValue(player, component.NewPlayerPositionData())
 	component.SpriteStand.SetValue(player, component.SpriteStandData{
 		IsDirectionRight: true,

@@ -8,7 +8,7 @@ type MovementData struct {
 	MaxSpeed      float64
 }
 
-var Movement = donburi.NewComponentType[MovementData](MovementData{})
+var Movement = donburi.NewComponentType[MovementData](NewMovementData())
 
 func NewMovementData() MovementData {
 	return MovementData{

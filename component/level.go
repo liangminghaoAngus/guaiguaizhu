@@ -16,9 +16,10 @@ var Level = donburi.NewComponentType[LevelData](LevelData{})
 
 func NewLevelData(level int) LevelData {
 	nextLevelExp, _ := enums.GetLevelEXP(level)
+	prevLevelExp, _ := enums.GetLevelEXP(level - 1)
 	return LevelData{
-		LevelNum:     1,
+		LevelNum:     level,
 		ExpNextLevel: nextLevelExp,
-		Exp:          0,
+		Exp:          prevLevelExp,
 	}
 }

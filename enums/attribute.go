@@ -30,6 +30,16 @@ var HealItemLevel = map[int]int{
 	5: 3000,
 }
 
+type Attribute int
+
+const (
+	AttributePower Attribute = iota + 1
+	AttributeStrength
+	AttributeQuick
+	AttributeMagic
+	AttributeEnergy
+)
+
 func calculateEXP() []int {
 	LevelGameEXP = make([]int, MaxGameLevel+1)
 	for i := StartGameLevel; i < MaxGameLevel; i++ {
