@@ -128,6 +128,12 @@ func (g *Game) Update() {
 			saveMap["player"] = t
 		}
 
+		if t, err := marshalComponentData(component.Attribute.Get(playForSave)); err != nil {
+			fmt.Printf("save data err:%+v\n", err)
+		} else {
+			saveMap["attribute"] = t
+		}
+
 		if t, err := marshalComponentData(transform.Transform.Get(playForSave)); err != nil {
 			fmt.Printf("save data err:%+v\n", err)
 		} else {
