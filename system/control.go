@@ -27,7 +27,6 @@ func (m *Control) Update(w donburi.World) {
 		position := component.Position.Get(entry)
 		movement := component.Movement.Get(entry)
 		input := component.Control.Get(entry)
-		isLeftPosition := false
 
 		if ebiten.IsKeyPressed(input.Left) || ebiten.IsKeyPressed(input.Right) {
 			movement.VelocityX += movement.AccelerationX
@@ -42,12 +41,15 @@ func (m *Control) Update(w donburi.World) {
 		}
 
 		if ebiten.IsKeyPressed(input.Left) {
+			if !position.IsFaceLeft() {
+				position.ChangeFaceDirection()
+			}
 			position.X -= movement.VelocityX
-			isLeftPosition = true
-			// fmt.Println(position)
 		} else if ebiten.IsKeyPressed(input.Right) {
+			if position.IsFaceLeft() {
+				position.ChangeFaceDirection()
+			}
 			position.X += movement.VelocityX
-			// fmt.Println(position)
 		}
 
 		if ebiten.IsKeyPressed(input.EnterKey) {
@@ -61,17 +63,17 @@ func (m *Control) Update(w donburi.World) {
 		if entry.HasComponent(component.SpriteStand) {
 			stand := component.SpriteStand.Get(entry)
 			// 判断是否进行了移动操作
-			if ebiten.IsKeyPressed(input.Left) || ebiten.IsKeyPressed(input.Right) {
+			if movement.VelocityX > 0 {
 				stand.Disabled = true
 			} else {
-				stand.IsDirectionRight = !isLeftPosition
+				stand.IsDirectionRight = !position.IsFaceLeft()
 				stand.Disabled = false
 			}
 		}
 		// 判断是否存在 spriteMovement 组件
 		if entry.HasComponent(component.SpriteMovement) {
 			move := component.SpriteMovement.Get(entry)
-			move.IsDirectionRight = !isLeftPosition
+			move.IsDirectionRight = !position.IsFaceLeft()
 			if movement.VelocityX > 0 {
 				move.Disabled = false
 			} else {

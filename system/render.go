@@ -45,12 +45,12 @@ func (r *Render) Update(w donburi.World) {
 		if entry.HasComponent(component.SpriteStand) {
 			standImages := component.SpriteStand.Get(entry)
 			if !standImages.Disabled {
-				index := (standImages.Count / 5) % 8
+				standImages.Count++
+				index := (standImages.Count / 5) % len(standImages.Images)
 				if index > len(standImages.Images)-1 {
 					standImages.Count = 0
 					index = 0
 				}
-				standImages.Count++
 			} else {
 				standImages.Count = 0 // 重置动画
 			}
@@ -60,12 +60,12 @@ func (r *Render) Update(w donburi.World) {
 		if entry.HasComponent(component.SpriteMovement) {
 			move := component.SpriteMovement.Get(entry)
 			if !move.Disabled {
-				index := (move.Count / 5) % 8
+				move.Count++
+				index := (move.Count / 5) % len(move.LeftImages)
 				if index > len(move.LeftImages)-1 {
 					move.Count = 0
 					index = 0
 				}
-				move.Count++
 			} else {
 				move.Count = 0 // 重置动画
 			}
@@ -111,7 +111,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		if entry.HasComponent(component.SpriteMovement) && entry.HasComponent(component.Position) {
 			movementImages := component.SpriteMovement.Get(entry)
 			if !movementImages.Disabled {
-				index := (movementImages.Count / 5) % 8
+				index := (movementImages.Count / 5) % len(movementImages.RightImages)
 				// 判断是否需要翻转贴图方向
 				targetImage := &ebiten.Image{}
 				if movementImages.IsDirectionRight {
@@ -130,7 +130,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			// position := component.Position.Get(entry)
 			standImages := component.SpriteStand.Get(entry)
 			if !standImages.Disabled {
-				index := (standImages.Count / 5) % 8
+				index := (standImages.Count / 5) % len(standImages.Images)
 				// 判断是否需要翻转贴图方向
 				targetImage := &ebiten.Image{}
 				if standImages.IsDirectionRight {
@@ -170,17 +170,6 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 					health.DrawPlayerHPImage(screen, health.HPui, x, y, lastTimeHP, 0.65)
 				}
 
-				//hpImage := health.HPui
-				//percent := float64(health.HP) / float64(health.HPMax)
-				//x0 := 0
-				//y0 := hpImage.Bounds().Dy()
-				//x1 := hpImage.Bounds().Dx()
-				//y1 := float64(hpImage.Bounds().Dy()) * (float64(1) - percent)
-				//
-				//
-				//op := &ebiten.DrawImageOptions{}
-				//op.GeoM.Translate(float64(x+10), float64(y+12+int(y1)))
-				//screen.DrawImage(hpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{ // mp
 				health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, health.MP, 1)
@@ -192,18 +181,6 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 					// 绘制上一次的内容
 					health.DrawPlayerMPImage(screen, health.MPui, x+gameData.SystemUI.Bounds().Dx(), y, lastTimeMP, 0.65)
 				}
-				//mpImage := health.MPui
-				//percent := float64(health.MP) / float64(health.MPMax)
-				//x0 := 0
-				//y0 := mpImage.Bounds().Dy()
-				//x1 := mpImage.Bounds().Dx()
-				//y1 := float64(mpImage.Bounds().Dy()) * (float64(1) - percent)
-				//
-				//transx := x + gameData.SystemUI.Bounds().Dx() - mpImage.Bounds().Dx()
-				//
-				//op := &ebiten.DrawImageOptions{}
-				//op.GeoM.Translate(float64(transx-16), float64(y+12+int(y1)))
-				//screen.DrawImage(mpImage.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 			}
 			{
 				percent := float64(level.Exp) / float64(level.ExpNextLevel)
@@ -222,7 +199,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				// screen.DrawImage(bgImg, op)
 				screen.DrawImage(bgImg.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 				text.Draw(screen, fmt.Sprint(level.LevelNum), font, health.HPui.Bounds().Dx()+x+22-bText.Dx()/2, screen.Bounds().Max.Y-int(fixedY)+2, color.White)
-				// fmt.Println(level.LevelNum)
+
 			}
 		}
 	}
