@@ -2,13 +2,14 @@ package entity
 
 import (
 	"bytes"
-	"github.com/yohamta/donburi/filter"
-	"github.com/yohamta/donburi/query"
 	"image"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
+
+	"github.com/yohamta/donburi/filter"
+	"github.com/yohamta/donburi/query"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
@@ -19,6 +20,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Player,
 	transform.Transform,
 	component.Health,
+	component.Heal,
 	component.Race,
 	component.Level,
 	component.Ability,

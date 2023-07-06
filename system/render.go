@@ -86,6 +86,13 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		pos := transform.WorldPosition(entry)
 		position := component.Position.Get(entry)
 
+		if entry.HasComponent(component.Sprite) {
+			sprite := component.Sprite.Get(entry)
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
+			screen.DrawImage(sprite.Image, op)
+		}
+
 		if entry.HasComponent(component.Collision) && entry.HasComponent(component.Position) {
 			collision := component.Collision.Get(entry)
 			for _, object := range collision.Items {

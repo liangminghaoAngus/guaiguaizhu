@@ -4,13 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/math"
-	"github.com/yohamta/donburi/features/transform"
 	"image"
 	"io"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
@@ -21,6 +14,14 @@ import (
 	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"liangminghaoangus/guaiguaizhu/system"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 type System interface {
@@ -73,17 +74,7 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
 	soundData := ChangeMusic("body")
-	//sampleRate := 11025
-	//s, err := wav.DecodeWithoutResampling(bytes.NewReader(sound.Intro))
-	//if err != nil {
-	//	println("music err")
-	//}
-	//audioContext := audio.NewContext(11025)
-	//m, err := io.ReadAll(s)
-	//if err != nil {
-	//	println("music err")
-	//}
-	//p := audioContext.NewPlayerFromBytes(m)
+
 	component.Sound.SetValue(soundEntity, *soundData)
 
 	systemUI, _, _ := image.Decode(bytes.NewReader(assetImages.SystemUI))
@@ -93,6 +84,14 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 
 	rookieMap := entity.NewRookieMap(world)
 	// entity.NewRookieMap(world)
+
+	// 放置需要的 npc
+	npcIDs := []int{1, 2, 3}
+	npcs := entity.NewNPCs(world, npcIDs)
+	for _, npc := range npcs {
+		transform.AppendChild(parent, npc, false)
+	}
+
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)
 
