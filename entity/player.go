@@ -20,6 +20,7 @@ import (
 
 var PlayerEntity = []donburi.IComponentType{
 	component.Player,
+	component.Box,
 	component.Attribute,
 	transform.Transform,
 	component.Health,
@@ -43,7 +44,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	}
 
 	playerPositionX, playerPositionY := 20, 20
-	playerH, playerW := 80, 50
+
 	playerLevel := 1
 
 	standImages := make([]*ebiten.Image, 0)
@@ -67,6 +68,11 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 
 	playerEntity := w.Create(PlayerEntity...)
 	player := w.Entry(playerEntity)
+
+	component.Box.SetValue(player, component.NewPlayerBox(raceInt))
+	box := component.Box.Get(player)
+	playerH, playerW := box.Height, box.Width
+
 	playerCollision := engine.NewObject(float64(playerPositionX), float64(playerPositionY), float64(playerW), float64(playerH), "player")
 	component.Health.SetValue(player, component.NewPlayerHealthData(hp, mp))
 	component.Race.SetValue(player, component.NewRaceData(raceInt))

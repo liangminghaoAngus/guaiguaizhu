@@ -95,6 +95,11 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)
 
+	teleports := entity.NewTeleports(world)
+	for _, teleport := range teleports {
+		transform.AppendChild(parent, teleport, false)
+	}
+
 	// 将 player 添加至 rookie map bound
 	rSpace := component.CollisionSpace.Get(rookieMap)
 	pCollision := component.Collision.Get(player)

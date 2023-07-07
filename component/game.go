@@ -3,9 +3,11 @@ package component
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
 	"liangminghaoangus/guaiguaizhu/config"
+	"liangminghaoangus/guaiguaizhu/enums"
 )
 
 type GameData struct {
@@ -42,3 +44,10 @@ func MustFindGame(w donburi.World) *GameData {
 	}
 	return Game.Get(game)
 }
+
+type TeleportData struct {
+	ToMap      enums.Map
+	ToPosition math.Vec2
+}
+
+var Teleport = donburi.NewComponentType[TeleportData](TeleportData{})

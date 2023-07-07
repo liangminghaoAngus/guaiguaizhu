@@ -6,10 +6,10 @@ import (
 )
 
 type SaveGame struct {
-	ID         int       `json:"id"`
-	SaveData   string    `json:"save_data"`
-	CreateTime time.Time `json:"create_time"`
-	UpdateTime time.Time `json:"update_time"`
+	ID         int       `json:"id" gorm:"column:id;"`
+	SaveData   string    `json:"save_data" gorm:"column:save_data;"`
+	CreateTime time.Time `json:"create_time" gorm:"column:create_time;"`
+	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;"`
 }
 
 func (g *SaveGame) TableName() string {

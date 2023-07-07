@@ -6,6 +6,8 @@ import (
 )
 
 type ControlData struct {
+	TeleportKey ebiten.Key
+
 	Left     ebiten.Key
 	Right    ebiten.Key
 	EnterKey ebiten.Key
@@ -23,6 +25,7 @@ var Control = donburi.NewComponentType[ControlData](ControlData{})
 
 func NewPlayerControl() ControlData {
 	return ControlData{
+		TeleportKey: ebiten.KeyArrowUp,
 		Left:        ebiten.KeyArrowLeft,
 		Right:       ebiten.KeyArrowRight,
 		EnterKey:    ebiten.KeyArrowUp,

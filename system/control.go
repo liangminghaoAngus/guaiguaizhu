@@ -2,6 +2,7 @@ package system
 
 import (
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/entity"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -85,6 +86,15 @@ func (m *Control) Update(w donburi.World) {
 
 		if inpututil.IsKeyJustPressed(input.StoreKey) {
 			gameData.IsPlayerStoreOpen = !gameData.IsPlayerStoreOpen
+		}
+
+		// teleport
+		if inpututil.IsKeyJustPressed(input.TeleportKey) {
+			if teleport := entity.PlayerInTeleport(w, position.Map); teleport != nil {
+				// todo
+				// 传送 entity 修改 entity 的 position
+				// 切换地图
+			}
 		}
 	})
 }
