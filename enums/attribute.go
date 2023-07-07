@@ -3,7 +3,7 @@ package enums
 import "fmt"
 
 const (
-	StartGameLevel = 1
+	StartGameLevel = 0
 	MaxGameLevel   = 150
 )
 

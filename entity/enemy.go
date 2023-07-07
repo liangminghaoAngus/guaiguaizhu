@@ -2,16 +2,17 @@ package entity
 
 import (
 	"fmt"
+	"liangminghaoangus/guaiguaizhu/component"
+
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
-	"liangminghaoangus/guaiguaizhu/component"
 )
 
 var EnemyEntity = []donburi.IComponentType{
+	component.Enemy,
 	transform.Transform,
 	component.Position,
 	component.Health,
-	component.Enemy,
 	component.Level,
 	component.Intro,
 	component.Movement,
