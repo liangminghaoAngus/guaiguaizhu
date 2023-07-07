@@ -85,11 +85,10 @@ func NewTeleports(world donburi.World) []*donburi.Entry {
 	return res
 }
 
-func PlayerInTeleport(world donburi.World, mapInt enums.Map) *donburi.Entry {
-	player := MustFindPlayerEntry(world)
-
-	playerPos := component.Position.Get(player)
-	playerBox := component.Box.Get(player)
+func InTeleport(world donburi.World, mainItem *donburi.Entry, mapInt enums.Map) *donburi.Entry {
+	//player := MustFindPlayerEntry(world)
+	playerPos := component.Position.Get(mainItem)
+	playerBox := component.Box.Get(mainItem)
 
 	teleports := ListMapTeleport(world, mapInt)
 	for _, v := range teleports {

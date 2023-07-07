@@ -70,3 +70,7 @@ func newMapEntry(w donburi.World, parent *donburi.Entry, mapInt enums.Map, npcID
 
 	return Map
 }
+
+func createMapBound(x, y, w, h float64) *engine.Object {
+	return engine.NewObject(x, y, w, h, "mapBound")
+}

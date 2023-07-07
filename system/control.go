@@ -1,15 +1,14 @@
 package system
 
 import (
-	"liangminghaoangus/guaiguaizhu/component"
-	"liangminghaoangus/guaiguaizhu/entity"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
+	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/entity"
 )
 
 type Control struct {
@@ -90,10 +89,14 @@ func (m *Control) Update(w donburi.World) {
 
 		// teleport
 		if inpututil.IsKeyJustPressed(input.TeleportKey) {
-			if teleport := entity.PlayerInTeleport(w, position.Map); teleport != nil {
-				// todo
+			if teleport := entity.InTeleport(w, entry, position.Map); teleport != nil {
 				// 传送 entity 修改 entity 的 position
 				// 切换地图
+				toPos := component.Teleport.Get(teleport)
+				pos := component.Position.Get(entry)
+				pos.Map = toPos.ToMap
+				pos.X = toPos.ToPosition.X
+				pos.Y = toPos.ToPosition.Y
 			}
 		}
 	})
