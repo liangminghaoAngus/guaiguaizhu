@@ -31,9 +31,9 @@ func NewRender() *Render {
 	r := &Render{
 		query: query.NewQuery(
 			filter.And(
-				filter.Contains(transform.Transform),
+				filter.Contains(transform.Transform, component.Position),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
-				filter.Not(filter.Contains(component.Map)))),
+				filter.Not(filter.Contains(component.Map, component.NotActive)))),
 		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Player, component.Level, component.Store)),
 		offscreen: ebiten.NewImage(3000, 3000),
 	}
@@ -98,7 +98,7 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		pos := transform.WorldPosition(entry)
 		position := component.Position.Get(entry)
 
-		if entry.HasComponent(component.Sprite) {
+		if entry.HasComponent(component.Sprite) && !entry.HasComponent(component.NotActive) {
 			sprite := component.Sprite.Get(entry)
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)

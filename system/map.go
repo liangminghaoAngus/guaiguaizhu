@@ -2,15 +2,16 @@ package system
 
 import (
 	"fmt"
+	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/entity"
+	"math"
+	"strconv"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
-	"liangminghaoangus/guaiguaizhu/component"
-	"liangminghaoangus/guaiguaizhu/entity"
-	"math"
-	"strconv"
 )
 
 type Map struct {
@@ -38,6 +39,24 @@ func (m *Map) Update(w donburi.World) {
 			entry.AddComponent(component.MapActive)
 		} else {
 			entry.RemoveComponent(component.MapActive)
+		}
+	})
+
+	component.Npc.Each(w, func(e *donburi.Entry) {
+		position := component.Position.Get(e)
+		if position.Map != playerPos.Map {
+			e.AddComponent(component.NotActive)
+		} else {
+			e.RemoveComponent(component.NotActive)
+		}
+	})
+
+	component.Teleport.Each(w, func(e *donburi.Entry) {
+		position := component.Position.Get(e)
+		if position.Map != playerPos.Map {
+			e.AddComponent(component.NotActive)
+		} else {
+			e.RemoveComponent(component.NotActive)
 		}
 	})
 

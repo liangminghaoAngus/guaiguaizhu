@@ -1,7 +1,6 @@
 package component
 
 import (
-	"fmt"
 	systemMath "math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -34,7 +33,7 @@ func (we *WeaponHandlerData) GetRenderPoint() math.Vec2 {
 	// height := we.Height
 	// c := systemMath.Sqrt(width*width + height*height)
 	p1 := RotatePoint(math.Vec2{X: we.Point.X - width, Y: we.Point.Y}, we.Point, we.Angle)
-	fmt.Println(p1)
+	// fmt.Println(p1)
 	return p1
 }
 

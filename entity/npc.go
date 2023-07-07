@@ -14,6 +14,7 @@ import (
 )
 
 var NPCEntity = []donburi.IComponentType{
+	component.Npc,
 	transform.Transform,
 	component.Position,
 	component.Sprite,
