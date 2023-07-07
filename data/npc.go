@@ -30,3 +30,11 @@ func GetNpcByID(ids []int) []Npc {
 	}
 	return r
 }
+
+func GetNpcByMapID(mapID int) []int {
+	r := make([]int, 0)
+	if err := getDb().Model(Npc{}).Where("map = ?", mapID).Select("id").Find(&r).Error; err != nil {
+		fmt.Println(err)
+	}
+	return r
+}

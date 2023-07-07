@@ -123,10 +123,14 @@ func Init() {
 		imageName := entry.Name()
 		filePath := path.Join("scene", imageName)
 		raw, _ := sceneImageDir.ReadFile(filePath)
-		switch imageName {
-		case "rookie_map.png":
-			MapImage[enums.MapRookie] = raw
+
+		if mapInt, ok := enums.MapImages[imageName]; ok {
+			MapImage[mapInt] = raw
 		}
+		//switch imageName {
+		//case "rookie_map.png":
+		//	MapImage[enums.MapRookie] = raw
+		//}
 	}
 	humanStandDirEntry, err := humanStandImageDir.ReadDir("human_stand")
 	if err != nil {

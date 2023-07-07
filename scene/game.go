@@ -47,7 +47,7 @@ func NewGame(raceInt enums.Race) *Game {
 
 func (g *Game) initGame(raceInt enums.Race) {
 	render := system.NewRender()
-	mapRender := system.NewMap(enums.MapRookie)
+	mapRender := system.NewMap()
 
 	g.systems = []System{
 		render,
@@ -82,7 +82,8 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	gameC := component.Game.Get(parent)
 	gameC.SystemUI = ebiten.NewImageFromImage(systemUI)
 
-	rookieMap := entity.NewRookieMap(world, parent)
+	//rookieMap := entity.NewRookieMap(world, parent)
+	mapsEntry := entity.NewGameMap(world, parent)
 	// entity.NewRookieMap(world)
 
 	// 放置需要的 npc
@@ -101,9 +102,11 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	}
 
 	// 将 player 添加至 rookie map bound
-	rSpace := component.CollisionSpace.Get(rookieMap)
-	pCollision := component.Collision.Get(player)
-	rSpace.Space.AddObject(pCollision.Items...)
+	if len(mapsEntry) > 0 {
+		rSpace := component.CollisionSpace.Get(mapsEntry[0])
+		pCollision := component.Collision.Get(player)
+		rSpace.Space.AddObject(pCollision.Items...)
+	}
 
 	return world
 }

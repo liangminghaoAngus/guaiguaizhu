@@ -33,6 +33,8 @@ var Game = donburi.NewComponentType[GameData](GameData{
 
 var Map = donburi.NewTag()
 
+var MapActive = donburi.NewTag()
+
 var Player = donburi.NewTag()
 
 var Enemy = donburi.NewTag()
