@@ -82,15 +82,15 @@ func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	gameC := component.Game.Get(parent)
 	gameC.SystemUI = ebiten.NewImageFromImage(systemUI)
 
-	rookieMap := entity.NewRookieMap(world)
+	rookieMap := entity.NewRookieMap(world, parent)
 	// entity.NewRookieMap(world)
 
 	// 放置需要的 npc
-	npcIDs := []int{1, 2, 3}
-	npcs := entity.NewNPCs(world, npcIDs)
-	for _, npc := range npcs {
-		transform.AppendChild(parent, npc, false)
-	}
+	//npcIDs := []int{1, 2, 3}
+	//npcs := entity.NewNPCs(world, npcIDs)
+	//for _, npc := range npcs {
+	//	transform.AppendChild(parent, npc, false)
+	//}
 
 	player := entity.NewPlayer(world, raceInt)
 	transform.AppendChild(parent, player, false)

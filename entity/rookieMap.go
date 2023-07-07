@@ -25,7 +25,7 @@ var RookieMap = []donburi.IComponentType{
 	component.CollisionSpace,
 }
 
-func NewRookieMap(w donburi.World) *donburi.Entry {
+func NewRookieMap(w donburi.World, parent *donburi.Entry) *donburi.Entry {
 	rookieMapEntity := w.Create(RookieMap...)
 	rookieMap := w.Entry(rookieMapEntity)
 
@@ -44,6 +44,13 @@ func NewRookieMap(w donburi.World) *donburi.Entry {
 
 	component.Sprite.SetValue(rookieMap, component.SpriteData{Image: bg})
 	component.CollisionSpace.SetValue(rookieMap, component.CollisionSpaceData{Space: space})
+
+	// 放置需要的 npc
+	npcIDs := []int{1, 2, 3}
+	npcs := NewNPCs(w, npcIDs)
+	for _, npc := range npcs {
+		transform.AppendChild(parent, npc, false)
+	}
 
 	return rookieMap
 }
