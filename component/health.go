@@ -110,6 +110,10 @@ type HealData struct {
 	itemHeal map[AnimateHealthItem]int
 }
 
+func (d *HealData) GetLevel() int {
+	return d.level
+}
+
 func (d *HealData) AddItem(hp, mp int) {
 	d.itemNums[AnimateHp] += hp
 	d.itemNums[AnimateMp] += mp

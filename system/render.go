@@ -34,7 +34,7 @@ func NewRender() *Render {
 				filter.Contains(transform.Transform, component.Position),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
 				filter.Not(filter.Contains(component.Map, component.NotActive)))),
-		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Player, component.Level, component.Store)),
+		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Heal, component.Player, component.Level, component.Store)),
 		offscreen: ebiten.NewImage(3000, 3000),
 	}
 	return r
@@ -221,6 +221,30 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				screen.DrawImage(bgImg.SubImage(image.Rect(x0, y0, x1, int(y1))).(*ebiten.Image), op)
 				text.Draw(screen, fmt.Sprint(level.LevelNum), font, health.HPui.Bounds().Dx()+x+22-bText.Dx()/2, screen.Bounds().Max.Y-int(fixedY)+2, color.White)
 
+			}
+			heal := component.Heal.Get(playerEntity)
+			scaleNum := 16
+			{
+				//  todo 可以先绘制一个底图，后续将图片放置进去，再做居中处理
+				// hp heal
+				raw := assetImages.HpLevelImage[heal.GetLevel()]
+				img, _, _ := image.Decode(bytes.NewReader(raw))
+				fixedY := float64(img.Bounds().Dy())
+				opt := &ebiten.DrawImageOptions{}
+				opt.GeoM.Scale(float64(scaleNum)/float64(img.Bounds().Dx()), float64(scaleNum)/float64(img.Bounds().Dy()))
+				opt.GeoM.Translate(float64(x+149), float64(screen.Bounds().Max.Y)-float64(fixedY)-11)
+				screen.DrawImage(ebiten.NewImageFromImage(img), opt)
+
+			}
+			{
+				// mp heal 180
+				raw := assetImages.MpLevelImage[heal.GetLevel()]
+				img, _, _ := image.Decode(bytes.NewReader(raw))
+				fixedY := float64(img.Bounds().Dy())
+				opt := &ebiten.DrawImageOptions{}
+				opt.GeoM.Scale(float64(scaleNum)/float64(img.Bounds().Dx()), float64(scaleNum)/float64(img.Bounds().Dy()))
+				opt.GeoM.Translate(float64(x+177), float64(screen.Bounds().Max.Y)-float64(fixedY)-11)
+				screen.DrawImage(ebiten.NewImageFromImage(img), opt)
 			}
 		}
 	}

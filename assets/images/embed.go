@@ -12,6 +12,52 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed ui/hp_1.png
+var hp1 []byte
+
+//go:embed ui/hp_2.png
+var hp2 []byte
+
+//go:embed ui/hp_3.png
+var hp3 []byte
+
+//go:embed ui/hp_4.png
+var hp4 []byte
+
+//go:embed ui/hp_5.png
+var hp5 []byte
+
+var HpLevelImage = map[int][]byte{
+	1: hp1,
+	2: hp2,
+	3: hp3,
+	4: hp4,
+	5: hp5,
+}
+
+//go:embed ui/mp_1.png
+var mp1 []byte
+
+//go:embed ui/mp_2.png
+var mp2 []byte
+
+//go:embed ui/mp_3.png
+var mp3 []byte
+
+//go:embed ui/mp_4.png
+var mp4 []byte
+
+//go:embed ui/mp_5.png
+var mp5 []byte
+
+var MpLevelImage = map[int][]byte{
+	1: mp1,
+	2: mp2,
+	3: mp3,
+	4: mp4,
+	5: mp5,
+}
+
 //go:embed npc
 var NpcImagesDir embed.FS
 
