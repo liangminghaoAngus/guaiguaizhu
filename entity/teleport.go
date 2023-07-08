@@ -1,17 +1,20 @@
 package entity
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/math"
-	"github.com/yohamta/donburi/features/transform"
-	"image/color"
+	"image"
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"strconv"
 	"strings"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 //type Teleport struct {
@@ -68,16 +71,17 @@ func NewTeleports(world donburi.World) []*donburi.Entry {
 		component.Box.SetValue(entry, component.NewTeleportBox())
 		box := component.Box.Get(entry)
 
-		// todo animate image
+		i, _, _ := image.Decode(bytes.NewReader(assetImages.Teleport))
+		im := ebiten.NewImageFromImage(i)
 		teleportImage := ebiten.NewImage(box.Width, box.Height)
-		teleportImage.Fill(color.White)
+		// teleportImage.Fill(color.Alpha)
+		ops := &ebiten.DrawImageOptions{}
+		scale := float64(teleportImage.Bounds().Dx()) / float64(im.Bounds().Dx())
+		ops.GeoM.Scale(scale, scale)
+		ops.GeoM.Translate(0, float64(teleportImage.Bounds().Dy())-float64(im.Bounds().Dy()))
+		teleportImage.DrawImage(im, ops)
 		component.Sprite.SetValue(entry, component.SpriteData{
 			Image: teleportImage,
-			//ColorOver:        component.ColorOverride{},
-			//HiddenED:         false,
-			//Layer:            0,
-			//Pivot:            0,
-			//OriginalRotation: 0,
 		})
 
 		res[ind] = entry

@@ -12,6 +12,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed ui/teleport.png
+var Teleport []byte
+
 //go:embed ui/hp_1.png
 var hp1 []byte
 
