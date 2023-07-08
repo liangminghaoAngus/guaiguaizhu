@@ -15,6 +15,12 @@ import (
 //go:embed weapon
 var WeaponDir embed.FS
 
+//go:embed ui/bag_panel.png
+var BagPanel []byte
+
+//go:embed ui/bag_grid.png
+var BagGrid []byte
+
 //go:embed ui/teleport.png
 var Teleport []byte
 

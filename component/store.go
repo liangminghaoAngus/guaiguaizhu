@@ -1,11 +1,14 @@
 package component
 
 import (
-	"image/color"
+	"bytes"
+	"image"
+
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
 )
@@ -28,19 +31,22 @@ type StoreData struct {
 	CapNum        int
 	CapItemIDMap  map[int]Index
 	Cap           [][]*StoreItem
+	selectXY      math.Vec2
 }
 
 type StoreItem struct {
+	Image    *ebiten.Image
 	ID       int
 	UUID     string
 	Type     int
+	Drag     bool
 	Count    int  // todo
 	MaxCount int  // todo
 	CanGroup bool // todo
 }
 
 var defaultStore = func() StoreData {
-	col, row := 6, 8
+	col, row := 4, 7
 	c := make([][]*StoreItem, col)
 	for i := 0; i < col; i++ {
 		l := make([]*StoreItem, row)
@@ -65,29 +71,42 @@ func MustFindStore(w donburi.World) *StoreData {
 	return Store.Get(entry)
 }
 
+func (d *StoreData) SetSelect(pos math.Vec2) {
+	d.selectXY = pos
+}
+
 func (d *StoreData) DrawUI() {
-	itemCeil := 50
-	borderSize := 2
-	wpx, hpx := itemCeil*d.Width, itemCeil*d.Height
-	uiMain := ebiten.NewImage(wpx, hpx)
+	itemCeil := 120
+	margin := 20
+	grid, _, _ := image.Decode(bytes.NewReader(assetImages.BagGrid))
+	gridImg := ebiten.NewImageFromImage(grid)
+	img, _, _ := image.Decode(bytes.NewReader(assetImages.BagPanel))
+	gridScale := float64(itemCeil) / float64(img.Bounds().Dx())
+
+	uiMain := ebiten.NewImageFromImage(img)
 	for i := 0; i < d.Height; i++ {
+		lineImg := ebiten.NewImage(img.Bounds().Dx(), itemCeil+10)
 		for j := 0; j < d.Width; j++ {
 			// Calculate the position of each item
-			x := i * itemCeil
-			y := j * itemCeil
-
-			// Draw a border around each item
-			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(itemCeil), float32(borderSize), color.Black, false)
-			vector.DrawFilledRect(uiMain, float32(x), float32(y)+float32(itemCeil-borderSize), float32(itemCeil), float32(borderSize), color.Black, false) // Bottom border
-			vector.DrawFilledRect(uiMain, float32(x), float32(y), float32(borderSize), float32(itemCeil), color.Black, false)
-			// Left border
-			vector.DrawFilledRect(uiMain, float32(x)+float32(itemCeil-borderSize), float32(y), float32(borderSize), float32(itemCeil), color.Black, false) // Right border
+			x := j*(itemCeil/2) + margin
+			ops := &ebiten.DrawImageOptions{}
+			ops.GeoM.Scale(gridScale, gridScale)
+			ops.GeoM.Translate(float64(x), float64(margin))
+			lineImg.DrawImage(gridImg, ops)
 		}
+		y := i*(itemCeil/2) + margin
+		lineOps := &ebiten.DrawImageOptions{}
+		lineOps.GeoM.Translate(float64(uiMain.Bounds().Dx()/2-lineImg.Bounds().Dx()/2+margin), float64(y))
+		uiMain.DrawImage(lineImg, lineOps)
 	}
+
+	// draw Items todo
+
 	d.MainUI = uiMain
 }
 
 func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
+	d.DrawUI()
 	uiMain := d.MainUI
 
 	// draw Item backpack todo
