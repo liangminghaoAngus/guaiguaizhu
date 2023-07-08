@@ -36,6 +36,7 @@ type StoreData struct {
 
 type StoreItem struct {
 	Image    *ebiten.Image
+	Exist    bool
 	ID       int
 	UUID     string
 	Type     int
@@ -50,7 +51,8 @@ var defaultStore = func() StoreData {
 	c := make([][]*StoreItem, col)
 	for i := 0; i < col; i++ {
 		l := make([]*StoreItem, row)
-		c = append(c, l)
+		c[i] = l
+		// c = append(c, l)
 	}
 	return StoreData{
 		Width:        row,
@@ -76,40 +78,59 @@ func (d *StoreData) SetSelect(pos math.Vec2) {
 }
 
 func (d *StoreData) DrawUI() {
-	itemCeil := 120
-	margin := 20
+	itemCeil := 60
+	margin := 5
+	marginBox := 16
 	grid, _, _ := image.Decode(bytes.NewReader(assetImages.BagGrid))
 	gridImg := ebiten.NewImageFromImage(grid)
 	img, _, _ := image.Decode(bytes.NewReader(assetImages.BagPanel))
-	gridScale := float64(itemCeil) / float64(img.Bounds().Dx())
+	gridScale := float64(itemCeil) / float64(grid.Bounds().Dx())
 
 	uiMain := ebiten.NewImageFromImage(img)
 	for i := 0; i < d.Height; i++ {
-		lineImg := ebiten.NewImage(img.Bounds().Dx(), itemCeil+10)
+		lineImg := ebiten.NewImage(img.Bounds().Dx(), itemCeil+3*margin)
 		for j := 0; j < d.Width; j++ {
 			// Calculate the position of each item
-			x := j*(itemCeil/2) + margin
+			x := j*itemCeil + (j+1)*margin
+
 			ops := &ebiten.DrawImageOptions{}
 			ops.GeoM.Scale(gridScale, gridScale)
 			ops.GeoM.Translate(float64(x), float64(margin))
 			lineImg.DrawImage(gridImg, ops)
 		}
-		y := i*(itemCeil/2) + margin
+		y := i*itemCeil + (i+1)*margin
 		lineOps := &ebiten.DrawImageOptions{}
-		lineOps.GeoM.Translate(float64(uiMain.Bounds().Dx()/2-lineImg.Bounds().Dx()/2+margin), float64(y))
+		lineOps.GeoM.Translate(float64(uiMain.Bounds().Dx()/2-lineImg.Bounds().Dx()/2+marginBox), float64(y+marginBox))
 		uiMain.DrawImage(lineImg, lineOps)
 	}
-
-	// draw Items todo
 
 	d.MainUI = uiMain
 }
 
 func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
-	d.DrawUI()
+	// d.DrawUI()
 	uiMain := d.MainUI
 
-	// draw Item backpack todo
+	itemCeil := 60
+	margin := 5
+	marginBox := 16
+
+	// draw Items
+	for i, row := range d.Cap {
+		y := i*itemCeil + (i+1)*margin
+		for j, item := range row {
+			if item == nil || !item.Exist {
+				continue
+			}
+			x := j*itemCeil + (j+1)*margin
+			i := item.Image.Bounds()
+			gridScale := float64(itemCeil) / float64(i.Dx())
+			ops := &ebiten.DrawImageOptions{}
+			ops.GeoM.Scale(gridScale, gridScale)
+			ops.GeoM.Translate(float64(x+marginBox), float64(y)+float64(margin+marginBox))
+			uiMain.DrawImage(item.Image, ops)
+		}
+	}
 
 	op := &ebiten.DrawImageOptions{}
 	x, y := float64(screen.Bounds().Dx()/2-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()/2-uiMain.Bounds().Dy()/2)
@@ -121,11 +142,13 @@ func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 func (d *StoreData) AddItem(item StoreItem) bool {
 	// 判断同种类型是否存在背包中
 	itemIndex := NewIndex()
+FullLoop:
 	for row := 0; row < len(d.Cap); row++ {
 		line := d.Cap[row]
 		for col := 0; col < len(line); col++ {
-			if d.Cap[row][col] == nil {
+			if d.Cap[row][col] == nil || !d.Cap[row][col].Exist {
 				itemIndex = &Index{col, row}
+				break FullLoop
 			}
 		}
 	}
@@ -135,7 +158,15 @@ func (d *StoreData) AddItem(item StoreItem) bool {
 	}
 
 	//
-	d.Cap[itemIndex.X][itemIndex.Y] = &item
+	if d.Cap[itemIndex.X][itemIndex.Y] == nil {
+		d.Cap[itemIndex.X][itemIndex.Y] = &StoreItem{}
+	}
+
+	d.Cap[itemIndex.X][itemIndex.Y].Image = item.Image
+	d.Cap[itemIndex.X][itemIndex.Y].Exist = true
+	d.Cap[itemIndex.X][itemIndex.Y].ID = item.ID
+	d.Cap[itemIndex.X][itemIndex.Y].UUID = item.UUID
+	d.Cap[itemIndex.X][itemIndex.Y].Count += 1
 
 	return true
 }

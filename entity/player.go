@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/color"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
 
+	"github.com/google/uuid"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
 
@@ -99,8 +101,21 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		TagsOrder: []string{"player"},
 	})
 	component.Ability.SetValue(player, component.NewAbility(raceInt))
+
 	store := component.MustFindStore(w)
 	store.DrawUI()
+
+	playerStore := component.Store.Get(player)
+
+	testImg := ebiten.NewImage(80, 80)
+	testImg.Fill(color.White)
+	testStoreItem := component.StoreItem{
+		Image: testImg,
+		Exist: true,
+		ID:    1,
+		UUID:  uuid.New().String(),
+	}
+	playerStore.AddItem(testStoreItem)
 
 	armer := ebiten.NewImage(20, 20)
 	// armer.Fill(color.White)
