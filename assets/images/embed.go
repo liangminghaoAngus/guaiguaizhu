@@ -12,6 +12,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed weapon
+var WeaponDir embed.FS
+
 //go:embed ui/teleport.png
 var Teleport []byte
 
