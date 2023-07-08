@@ -24,8 +24,8 @@ type Render struct {
 	offscreen *ebiten.Image
 }
 
-var implCount = 10
-var countFrame = 0
+// var implCount = 10
+// var countFrame = 0
 
 func NewRender() *Render {
 	r := &Render{
@@ -74,14 +74,14 @@ func (r *Render) Update(w donburi.World) {
 			}
 		}
 
-		if entry.HasComponent(component.WeaponHandler) {
-			weaponHand := component.WeaponHandler.Get(entry)
-			countFrame++
-			if countFrame >= implCount {
-				countFrame = 0
-				weaponHand.Angle += 5
-			}
-		}
+		// if entry.HasComponent(component.WeaponHandler) {
+		// 	weaponHand := component.WeaponHandler.Get(entry)
+		// 	countFrame++
+		// 	if countFrame >= implCount {
+		// 		countFrame = 0
+		// 		weaponHand.Angle += 5
+		// 	}
+		// }
 
 	})
 
@@ -122,8 +122,10 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
 		if entry.HasComponent(component.SpriteMovement) && entry.HasComponent(component.Position) {
 			movementImages := component.SpriteMovement.Get(entry)
+			box := component.Box.Get(entry)
 			if !movementImages.Disabled {
 				index := (movementImages.Count / 5) % len(movementImages.RightImages)
+				boxImage := ebiten.NewImage(box.Width, box.Height)
 				// 判断是否需要翻转贴图方向
 				targetImage := &ebiten.Image{}
 				if movementImages.IsDirectionRight {
@@ -131,38 +133,58 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 				} else {
 					targetImage = movementImages.LeftImages[index]
 				}
-
+				ops := &ebiten.DrawImageOptions{}
+				scale := float64(boxImage.Bounds().Dx()) / float64(targetImage.Bounds().Dx())
+				ops.GeoM.Scale(scale, scale)
+				boxImage.DrawImage(targetImage, ops)
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
-				screen.DrawImage(targetImage, op)
+				screen.DrawImage(boxImage, op)
 			}
 		}
 
-		if entry.HasComponent(component.WeaponHandler) {
+		// 武器绘制
+		if entry.HasComponent(component.WeaponHandler) && entry.HasComponent(component.Box) {
 			weaponHand := component.WeaponHandler.Get(entry)
-			drawX, drawY := weaponHand.GetRenderPoint().X+position.X+pos.X, weaponHand.GetRenderPoint().Y+position.Y+pos.Y
+			// box := component.Box.Get(entry)
+			boxImage := ebiten.NewImage(200, 200)
+			drawX, drawY := weaponHand.GetRenderPoint().X, weaponHand.GetRenderPoint().Y
 			ops := &ebiten.DrawImageOptions{}
 			ops.GeoM.Rotate(weaponHand.Angle)
 			ops.GeoM.Translate(drawX, drawY)
-			screen.DrawImage(weaponHand.Image, ops)
+			boxImage.DrawImage(weaponHand.Image, ops)
+			boxOps := &ebiten.DrawImageOptions{}
+			boxOps.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
+			if weaponHand.Weapon != nil {
+				weaponBox := ebiten.NewImage(int(weaponHand.Weapon.Width), int(weaponHand.Weapon.Height))
+				weaponBox.DrawImage(weaponHand.Weapon.Image, nil)
+				ops := &ebiten.DrawImageOptions{}
+				ops.GeoM.Translate(drawX+weaponHand.WeaponPoint.X, drawY+weaponHand.WeaponPoint.Y)
+				boxImage.DrawImage(weaponBox, ops)
+			}
+			screen.DrawImage(boxImage, boxOps)
 		}
 
-		if entry.HasComponent(component.SpriteStand) && entry.HasComponent(component.Position) {
-			// position := component.Position.Get(entry)
+		if entry.HasComponent(component.SpriteStand) && entry.HasComponent(component.Position) && entry.HasComponent(component.Box) {
 			standImages := component.SpriteStand.Get(entry)
+			box := component.Box.Get(entry)
 			if !standImages.Disabled {
 				index := (standImages.Count / 5) % len(standImages.Images)
 				// 判断是否需要翻转贴图方向
+				boxImage := ebiten.NewImage(box.Width, box.Height)
 				targetImage := &ebiten.Image{}
 				if standImages.IsDirectionRight {
 					targetImage = standImages.Images[index]
 				} else {
 					targetImage = standImages.ImagesRight[index]
 				}
-
+				ops := &ebiten.DrawImageOptions{}
+				scale := float64(boxImage.Bounds().Dx()) / float64(targetImage.Bounds().Dx())
+				ops.GeoM.Scale(scale, scale)
+				boxImage.DrawImage(targetImage, ops)
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
-				screen.DrawImage(targetImage, op)
+				screen.DrawImage(boxImage, op)
 			}
 		}
 
