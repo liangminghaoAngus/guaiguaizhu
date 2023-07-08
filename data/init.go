@@ -26,6 +26,7 @@ func Init() {
 		"item":       Item{},
 		"store_item": StoreItem{},
 		"teleport":   Teleport{},
+		"weapon":     Weapon{},
 	}
 	for table, structTable := range tableList {
 		if !db.Migrator().HasTable(table) {

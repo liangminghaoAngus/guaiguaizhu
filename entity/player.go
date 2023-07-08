@@ -2,10 +2,11 @@ package entity
 
 import (
 	"bytes"
+	"fmt"
 	"image"
-	"image/color"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
 
@@ -101,11 +102,29 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	store := component.MustFindStore(w)
 	store.DrawUI()
 
-	armer := ebiten.NewImage(20, 40)
-	armer.Fill(color.Black)
+	armer := ebiten.NewImage(20, 20)
+	// armer.Fill(color.White)
+	humanHand, _ := assetImages.WeaponDir.ReadFile("weapon/666.png")
+	humanHandImg, _, _ := image.Decode(bytes.NewReader(humanHand))
+	hImg := ebiten.NewImageFromImage(humanHandImg)
+	ops := &ebiten.DrawImageOptions{}
+	ops.GeoM.Scale(0.6, 0.6)
+	armer.DrawImage(hImg, ops)
+
+	// todo test weapon
+	weaponData := data.GetWeaponByID(1)
+	wi, _ := assetImages.WeaponDir.ReadFile(fmt.Sprintf("weapon/%s", weaponData.Image))
+	weaponImg, _, _ := image.Decode(bytes.NewReader(wi))
+
 	component.WeaponHandler.SetValue(player, component.WeaponHandlerData{
-		Image:  armer,
-		Point:  math.NewVec2(20, 20),
+		Image:       armer,
+		WeaponPoint: math.NewVec2(20, 20),
+		Weapon: &component.WeaponData{
+			Image:  ebiten.NewImageFromImage(weaponImg),
+			Width:  80,
+			Height: 33,
+		},
+		Point:  math.NewVec2(20, 34),
 		Width:  float64(armer.Bounds().Dx()),
 		Height: float64(armer.Bounds().Dy()),
 	})

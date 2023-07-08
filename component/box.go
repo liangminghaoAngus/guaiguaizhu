@@ -1,8 +1,9 @@
 package component
 
 import (
-	"github.com/yohamta/donburi"
 	"liangminghaoangus/guaiguaizhu/enums"
+
+	"github.com/yohamta/donburi"
 )
 
 type BoxData struct {
@@ -16,18 +17,18 @@ func NewPlayerBox(raceInt enums.Race) BoxData {
 	switch raceInt {
 	case enums.RaceGod:
 		r = BoxData{
-			Width:  50,
-			Height: 80,
+			Width:  40,
+			Height: 60,
 		}
 	case enums.RaceHuman:
 		r = BoxData{
-			Width:  50,
-			Height: 80,
+			Width:  40,
+			Height: 60,
 		}
 	case enums.RaceDevil:
 		r = BoxData{
-			Width:  50,
-			Height: 80,
+			Width:  40,
+			Height: 60,
 		}
 	}
 	return r
