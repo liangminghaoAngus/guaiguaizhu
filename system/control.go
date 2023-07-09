@@ -1,14 +1,16 @@
 package system
 
 import (
+	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/entity"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
-	"liangminghaoangus/guaiguaizhu/component"
-	"liangminghaoangus/guaiguaizhu/entity"
 )
 
 type Control struct {
@@ -85,6 +87,29 @@ func (m *Control) Update(w donburi.World) {
 
 		if inpututil.IsKeyJustPressed(input.StoreKey) {
 			gameData.IsPlayerStoreOpen = !gameData.IsPlayerStoreOpen
+		}
+		x, y := ebiten.CursorPosition()
+		if gameData.IsPlayerStoreOpen {
+			store := component.Store.Get(entry)
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+				store.SetSelect(math.NewVec2(float64(x), float64(y)))
+			} else if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+				// fmt.Println("release")
+				if store.DragItem != nil {
+					cur := math.NewVec2(float64(x)-store.RenderPoint.X, float64(y)-store.RenderPoint.Y)
+					curGrid, ind := store.GetItem(cur.X, cur.Y)
+					if curGrid == nil {
+						curGrid = store.Cap[ind[0]][ind[1]]
+					}
+
+					store.Cap[store.DragIndex[0]][store.DragIndex[1]].Drag = false
+					if ok := store.SwitchItems(curGrid, store.DragItem); ok {
+						// 重置选区
+						store.DragItem = nil
+						store.DragIndex = [2]int{-1, -1}
+					}
+				}
+			}
 		}
 
 		// teleport

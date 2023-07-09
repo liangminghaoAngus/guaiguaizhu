@@ -276,6 +276,19 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			backpack := component.Store.Get(playerEntity)
 			// draw store
 			backpack.DrawBackpackUI(screen)
+
+			x, y := ebiten.CursorPosition()
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+				store := component.Store.Get(playerEntity)
+
+				if store.DragItem != nil {
+					ops := &ebiten.DrawImageOptions{}
+					ops.GeoM.Translate(float64(x-store.DragItem.Image.Bounds().Dx()/2), float64(y-store.DragItem.Image.Bounds().Dy()/2))
+					ops.ColorScale.ScaleAlpha(0.5)
+					screen.DrawImage(store.DragItem.Image, ops)
+				}
+			}
 		}
+
 	}
 }

@@ -26,15 +26,22 @@ func NewIndex() *Index {
 }
 
 type StoreData struct {
+	RenderPoint   math.Vec2
 	MainUI        *ebiten.Image
 	Height, Width int
 	CapNum        int
 	CapItemIDMap  map[int]Index
 	Cap           [][]*StoreItem
-	selectXY      math.Vec2
+
+	selectXY  math.Vec2
+	DragIndex [2]int
+	DragItem  *StoreItem
 }
 
 type StoreItem struct {
+	Pos0, Pos1 math.Vec2
+	Index      [2]int
+
 	Image    *ebiten.Image
 	Exist    bool
 	ID       int
@@ -44,6 +51,10 @@ type StoreItem struct {
 	Count    int  // todo
 	MaxCount int  // todo
 	CanGroup bool // todo
+}
+
+func (st *StoreItem) IsExist() bool {
+	return st != nil && st.Exist
 }
 
 var defaultStore = func() StoreData {
@@ -73,8 +84,36 @@ func MustFindStore(w donburi.World) *StoreData {
 	return Store.Get(entry)
 }
 
-func (d *StoreData) SetSelect(pos math.Vec2) {
-	d.selectXY = pos
+func (d *StoreData) SetSelect(pos math.Vec2) *StoreItem {
+	// itemCeil := 60
+	// 需要减去 bag panel 起始点
+	d.selectXY = math.NewVec2(pos.X-d.RenderPoint.X, pos.Y-d.RenderPoint.Y)
+	// x := pos.X / float64(itemCeil)
+	// y := pos.Y / float64(itemCeil)
+	item, index := d.GetItem(d.selectXY.X, d.selectXY.Y)
+	if item == nil {
+		return nil
+	}
+	item.Drag = true
+	d.DragItem = item
+	d.DragIndex = index
+	return item
+}
+
+func (d *StoreData) GetItem(x, y float64) (*StoreItem, [2]int) {
+	for i, row := range d.Cap {
+		// y := i*itemCeil + (i+1)*margin
+		for j, item := range row {
+			if item.Pos0.X <= x && item.Pos1.X >= x && item.Pos0.Y <= y && item.Pos1.Y >= y {
+				if item == nil || !item.Exist {
+					item = nil
+				}
+				return item, [2]int{i, j}
+			}
+		}
+	}
+
+	return nil, [2]int{}
 }
 
 func (d *StoreData) DrawUI() {
@@ -88,19 +127,29 @@ func (d *StoreData) DrawUI() {
 
 	uiMain := ebiten.NewImageFromImage(img)
 	for i := 0; i < d.Height; i++ {
+		y := i*itemCeil + (i+1)*margin
 		lineImg := ebiten.NewImage(img.Bounds().Dx(), itemCeil+3*margin)
+		lineX := float64(uiMain.Bounds().Dx()/2 - lineImg.Bounds().Dx()/2 + marginBox)
+		lineY := float64(y + marginBox)
 		for j := 0; j < d.Width; j++ {
 			// Calculate the position of each item
 			x := j*itemCeil + (j+1)*margin
+
+			d.Cap[i][j] = &StoreItem{
+				Exist: false,
+				Index: [2]int{i, j},
+				Pos0:  math.NewVec2(float64(x)+lineX, float64(y)+lineY),
+				Pos1:  math.NewVec2(float64(x+itemCeil)+lineX, float64(y+itemCeil)+lineY),
+			}
 
 			ops := &ebiten.DrawImageOptions{}
 			ops.GeoM.Scale(gridScale, gridScale)
 			ops.GeoM.Translate(float64(x), float64(margin))
 			lineImg.DrawImage(gridImg, ops)
 		}
-		y := i*itemCeil + (i+1)*margin
+
 		lineOps := &ebiten.DrawImageOptions{}
-		lineOps.GeoM.Translate(float64(uiMain.Bounds().Dx()/2-lineImg.Bounds().Dx()/2+marginBox), float64(y+marginBox))
+		lineOps.GeoM.Translate(lineX, lineY)
 		uiMain.DrawImage(lineImg, lineOps)
 	}
 
@@ -119,7 +168,7 @@ func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 	for i, row := range d.Cap {
 		y := i*itemCeil + (i+1)*margin
 		for j, item := range row {
-			if item == nil || !item.Exist {
+			if item == nil || !item.Exist || item.Drag {
 				continue
 			}
 			x := j*itemCeil + (j+1)*margin
@@ -135,6 +184,7 @@ func (d *StoreData) DrawBackpackUI(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	x, y := float64(screen.Bounds().Dx()/2-uiMain.Bounds().Dx()/2), float64(screen.Bounds().Dy()/2-uiMain.Bounds().Dy()/2)
 	op.GeoM.Translate(x, y)
+	d.RenderPoint = math.NewVec2(x, y)
 	// 居中绘制
 	screen.DrawImage(uiMain, op)
 }
@@ -185,25 +235,15 @@ func (d *StoreData) RemoveItem(item StoreItem) bool {
 
 }
 
-func (d *StoreData) SwitchItems(item1, item2 StoreItem) bool {
-	item1Found := false
-	item2Found := false
-	item1Row, item1Col := -1, -1
-	item2Row, item2Col := -1, -1
-	for row := 0; row < d.Height; row++ {
-		for col := 0; col < d.Width; col++ {
-			if d.Cap[row][col].UUID == item1.UUID {
-				item1Found = true
-				item1Row, item1Col = row, col
-			} else if d.Cap[row][col].UUID == item2.UUID {
-				item2Found = true
-				item2Row, item2Col = row, col
-			}
-		}
+func (d *StoreData) SwitchItems(item1, item2 *StoreItem) bool {
+	if len(item1.Index) < 2 || len(item2.Index) < 2 {
+		return false
 	}
-	if item1Found && item2Found {
-		d.Cap[item1Row][item1Col], d.Cap[item2Row][item2Col] = d.Cap[item2Row][item2Col], d.Cap[item1Row][item1Col]
-		return true
-	}
-	return false
+
+	item1Row, item1Col := item1.Index[0], item1.Index[1]
+	item2Row, item2Col := item2.Index[0], item2.Index[1]
+
+	d.Cap[item1Row][item1Col], d.Cap[item2Row][item2Col] = d.Cap[item2Row][item2Col], d.Cap[item1Row][item1Col]
+
+	return true
 }
