@@ -3,9 +3,6 @@ package entity
 import (
 	"bytes"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/transform"
 	"image"
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
@@ -13,6 +10,10 @@ import (
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 var GameMap = []donburi.IComponentType{
@@ -60,6 +61,10 @@ func newMapEntry(w donburi.World, parent *donburi.Entry, mapInt enums.Map, npcID
 		ID:    fmt.Sprintf("map_%d", mapInt),
 		Name:  enums.MapName[mapInt],
 		Intro: "",
+	})
+	component.EnemyMaxCount.SetValue(Map, component.EnemyMaxCountData{
+		Max: enums.MapEnemyMax[mapInt],
+		Cur: 0,
 	})
 
 	// 放置需要的 npc

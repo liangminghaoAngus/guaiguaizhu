@@ -18,3 +18,8 @@ var MapName = map[Map]string{
 	MapRookie:   "新手村",
 	MapFirstout: "城门外",
 }
+
+var MapEnemyMax = map[Map]int{
+	MapRookie:   0,
+	MapFirstout: 6,
+}
