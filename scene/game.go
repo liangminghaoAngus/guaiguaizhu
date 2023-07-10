@@ -112,7 +112,7 @@ func (g *Game) Update() {
 		gameData.Pause = !gameData.Pause
 		bgSound.AudioPlayer.Pause()
 	} else {
-		if !bgSound.AudioPlayer.IsPlaying() {
+		if !gameData.Pause && !bgSound.AudioPlayer.IsPlaying() {
 			_ = bgSound.AudioPlayer.Rewind()
 			bgSound.AudioPlayer.Play()
 		}
