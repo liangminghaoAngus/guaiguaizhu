@@ -11,3 +11,23 @@
 ```
 
 
+### Done
+- [x] Map
+- [x] Teleport
+- [x] Move
+- [x] Health
+- [x] Heal
+- [x] Level
+- [x] AnimateScene
+
+### Doing
+- [ ] Bag
+- [ ] Player
+- [ ] Enemy
+- [ ] Skill
+- [ ] SaveGame
+
+### ToDo
+- [ ] Bone
+- [ ] Attack
+- [ ] KeyBinding
