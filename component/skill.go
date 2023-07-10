@@ -3,6 +3,7 @@ package component
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
+	"image/color"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"sort"
@@ -70,7 +71,12 @@ func NewAbility(raceInt enums.Race) AbilityData {
 	m := make(map[int]SkillItem)
 	l := data.ListAbilityByRace(raceInt)
 	for _, val := range l {
+		testImg := ebiten.NewImage(80, 80)
+		testImg.Fill(color.Black)
 		m[val.ID] = SkillItem{
+			Image:     testImg,
+			Type:      0,
+			CoolDown:  0,
 			Name:      val.Name,
 			Info:      val.Intro,
 			CostHP:    val.CostHP,
