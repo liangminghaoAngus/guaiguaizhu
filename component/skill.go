@@ -27,7 +27,7 @@ type SkillItem struct {
 
 var Ability = donburi.NewComponentType[AbilityData](AbilityData{})
 
-func (s *AbilityData) ListByLevel() []SkillItem {
+func (s *AbilityData) ListOrderByLevel() []SkillItem {
 	res := make([]SkillItem, 0)
 	for _, v := range s.Items {
 		i := v
@@ -43,9 +43,27 @@ func (s *AbilityData) ListByLevel() []SkillItem {
 	return res
 }
 
-// todo
 func (s *AbilityData) DrawAbilityList(level int) *ebiten.Image {
-	return nil
+	itemCeil := 60
+	margin := 10
+	l := s.ListOrderByLevel()
+	lineImg := ebiten.NewImage(len(l)*itemCeil+(len(l)+1)*margin, itemCeil+2*margin)
+	for ind, item := range l {
+		grid := ebiten.NewImage(itemCeil, itemCeil)
+		x := (ind+1)*margin + ind*itemCeil
+		y := margin + itemCeil
+		scale := float64(item.Image.Bounds().Dx()) / float64(itemCeil)
+		ops := &ebiten.DrawImageOptions{}
+		ops.GeoM.Scale(scale, scale)
+		if !(item.NeedLevel > level) {
+			// draw
+			grid.DrawImage(item.Image, ops)
+		}
+		opsLine := &ebiten.DrawImageOptions{}
+		opsLine.GeoM.Translate(float64(x), float64(y))
+		lineImg.DrawImage(grid, opsLine)
+	}
+	return lineImg
 }
 
 func NewAbility(raceInt enums.Race) AbilityData {

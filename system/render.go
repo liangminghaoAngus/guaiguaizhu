@@ -192,6 +192,15 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 
 	playerEntity, ok := r.playerUI.First(w)
 
+	// 绘制技能栏
+	{
+		level := component.Level.Get(playerEntity)
+		playerSkills := component.Ability.Get(playerEntity)
+		skillImage := playerSkills.DrawAbilityList(level.LevelNum)
+		op := &ebiten.DrawImageOptions{}
+		screen.DrawImage(skillImage, op)
+	}
+
 	// 绘制 UI
 	{
 		x := screen.Bounds().Max.X/2 - gameData.SystemUI.Bounds().Dx()/2

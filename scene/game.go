@@ -48,6 +48,7 @@ func NewGame(raceInt enums.Race) *Game {
 func (g *Game) initGame(raceInt enums.Race) {
 	render := system.NewRender()
 	mapRender := system.NewMap()
+	animateScene := system.NewAnimation()
 
 	g.systems = []System{
 		render,
@@ -55,11 +56,13 @@ func (g *Game) initGame(raceInt enums.Race) {
 		system.NewSound(),
 		system.NewHeath(),
 		mapRender,
+		animateScene,
 	}
 
 	g.drawables = []Drawable{
 		mapRender,
 		render,
+		animateScene,
 	}
 
 	g.world = g.createWorld(raceInt)
@@ -68,8 +71,12 @@ func (g *Game) initGame(raceInt enums.Race) {
 
 func (g *Game) createWorld(raceInt enums.Race) donburi.World {
 	world := donburi.NewWorld()
-	parent := world.Entry(world.Create(component.Game, transform.Transform))
+	parent := world.Entry(world.Create(entity.GameEntity...))
 	transform.SetWorldPosition(parent, math.Vec2{X: 0, Y: 300})
+
+	cfg := config.GetConfig()
+	ot := ebiten.NewImage(cfg.ScreenWidth, cfg.ScreenHeight)
+	component.Animation.SetValue(parent, component.NewAnimation(ot, cfg.ScreenWidth, cfg.ScreenHeight))
 
 	soundEntity := world.Entry(world.Create(component.Sound, component.BgSound))
 
