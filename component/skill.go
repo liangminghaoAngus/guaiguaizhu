@@ -1,13 +1,14 @@
 package component
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi"
 	"image/color"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"sort"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi"
 )
 
 type AbilityData struct {
@@ -52,7 +53,7 @@ func (s *AbilityData) DrawAbilityList(level int) *ebiten.Image {
 	for ind, item := range l {
 		grid := ebiten.NewImage(itemCeil, itemCeil)
 		x := (ind+1)*margin + ind*itemCeil
-		y := margin + itemCeil
+		y := margin
 		scale := float64(item.Image.Bounds().Dx()) / float64(itemCeil)
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Scale(scale, scale)
@@ -71,7 +72,7 @@ func NewAbility(raceInt enums.Race) AbilityData {
 	m := make(map[int]SkillItem)
 	l := data.ListAbilityByRace(raceInt)
 	for _, val := range l {
-		testImg := ebiten.NewImage(80, 80)
+		testImg := ebiten.NewImage(60, 60)
 		testImg.Fill(color.Black)
 		m[val.ID] = SkillItem{
 			Image:     testImg,

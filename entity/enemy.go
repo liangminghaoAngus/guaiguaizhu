@@ -1,15 +1,19 @@
 package entity
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/yohamta/donburi/features/math"
+	"image"
+	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"math/rand"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/yohamta/donburi/features/math"
 
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/transform"
@@ -24,7 +28,7 @@ var EnemyEntity = []donburi.IComponentType{
 	component.Level,
 	component.Intro,
 	component.Movement,
-	//component.SpriteStand,
+	component.SpriteStand,
 	//component.SpriteMovement,
 	//component.Collision,
 }
@@ -43,7 +47,6 @@ func NewEnemyByMap(w donburi.World, parent *donburi.Entry, mapInt enums.Map) []*
 	return res
 }
 
-// todo
 func NewEnemyEntity(w donburi.World, parent *donburi.Entry, enemyID int, num int, area [2]math.Vec2) []*donburi.Entry {
 	entitys := make([]*donburi.Entry, num)
 
@@ -58,7 +61,7 @@ func NewEnemyEntity(w donburi.World, parent *donburi.Entry, enemyID int, num int
 		healthParams := basicHealthParams{} // todo
 
 		// random area  just use x now
-		x := randomNum(int(area[0].X), int(area[1].Y))
+		x := randomNum(int(area[0].X), int(area[1].X))
 		component.Position.SetValue(entry, component.PositionData{
 			X:             float64(x),
 			Y:             0,
@@ -82,7 +85,28 @@ func NewEnemyEntity(w donburi.World, parent *donburi.Entry, enemyID int, num int
 			Intro: enemyData.Intro,
 		})
 		component.Movement.SetValue(entry, component.NewMovementData())
-		//	component.SpriteStand,
+		//  根据 id 匹配对应的贴图
+		enemyPngFile, _ := assetImages.EnemyImageDir.ReadDir(fmt.Sprintf("enemy/%d", enemyData.ID))
+		l1, r1 := make([]*ebiten.Image, 0), make([]*ebiten.Image, 0)
+		for _, item := range enemyPngFile {
+			raw, _ := assetImages.EnemyImageDir.ReadFile(fmt.Sprintf("enemy/%d/%s", enemyData.ID, item.Name()))
+			img, _, _ := image.Decode(bytes.NewReader(raw))
+			r := ebiten.NewImageFromImage(img)
+			r1 = append(r1, r)
+			box := ebiten.NewImage(img.Bounds().Dx(), img.Bounds().Dy())
+			ops := &ebiten.DrawImageOptions{}
+			ops.GeoM.Scale(-1, 0)
+			ops.GeoM.Translate(0, 0)
+			box.DrawImage(r, ops)
+			l1 = append(l1, box)
+		}
+		component.SpriteStand.SetValue(entry, component.SpriteStandData{
+			IsDirectionRight: true,
+			Disabled:         false,
+			Images:           l1,
+			ImagesRight:      r1,
+		})
+
 		//	component.SpriteMovement,
 		//	component.Collision,
 
@@ -120,5 +144,8 @@ func newEnemyBasicHealth(params basicHealthParams) component.HealthData {
 
 func randomNum(a, b int) int {
 	rand.Seed(time.Now().UnixNano())
+	if b-a == 0 {
+		return 0
+	}
 	return rand.Intn(b-a) + a
 }

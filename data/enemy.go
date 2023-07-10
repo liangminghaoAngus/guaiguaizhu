@@ -56,18 +56,24 @@ func (e *Enemy) TransLate2EnemyItem() *EnemyItem {
 		Image: e.Image,
 	}
 	if e.Health != "" {
-		if raw, err := json.Marshal(e.Health); err == nil {
-			h := EnemyHealth{}
-			_ = json.Unmarshal(raw, &h)
+
+		h := EnemyHealth{}
+		if err := json.Unmarshal([]byte(e.Health), &h); err == nil {
 			tmp.Health = h
+		} else {
+			fmt.Println(err)
 		}
+
 	}
 	if e.Box != "" {
-		if raw, err := json.Marshal(e.Box); err == nil {
-			h := EnemyBox{}
-			_ = json.Unmarshal(raw, &h)
+
+		h := EnemyBox{}
+		if err := json.Unmarshal([]byte(e.Box), &h); err == nil {
 			tmp.Box = h
+		} else {
+			fmt.Println(err)
 		}
+
 	}
 	return tmp
 }

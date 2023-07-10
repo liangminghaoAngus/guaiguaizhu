@@ -12,6 +12,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed enemy
+var EnemyImageDir embed.FS
+
 //go:embed weapon
 var WeaponDir embed.FS
 

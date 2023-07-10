@@ -45,7 +45,8 @@ func (m *Map) Update(w donburi.World) {
 			entry.AddComponent(component.MapActive)
 			if enemyMaxCount.Cur < enemyMaxCount.Max {
 				// 添加当前地图的怪物
-				entity.NewEnemyByMap(w, playTransform, playerPos.Map)
+				e := entity.NewEnemyByMap(w, playTransform, playerPos.Map)
+				enemyMaxCount.Cur += len(e)
 			}
 		} else {
 			entry.RemoveComponent(component.MapActive)
