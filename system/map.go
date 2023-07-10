@@ -32,13 +32,31 @@ func (m *Map) Update(w donburi.World) {
 	// 判断角色所在的地图
 	player := entity.MustFindPlayerEntry(w)
 	playerPos := component.Position.Get(player)
+	playTransform, ok := transform.GetParent(player)
+	if !ok {
+		return
+	}
+
 	// 设置切换场景地图
 	query.NewQuery(filter.Contains(transform.Transform, component.Sprite, component.Intro, component.Map)).Each(w, func(entry *donburi.Entry) {
 		intro := component.Intro.Get(entry)
+		enemyMaxCount := component.EnemyMaxCount.Get(entry)
 		if intro.ID == fmt.Sprintf("map_%d", playerPos.Map) {
 			entry.AddComponent(component.MapActive)
+			if enemyMaxCount.Cur < enemyMaxCount.Max {
+				// 添加当前地图的怪物
+				entity.NewEnemyByMap(w, playTransform, playerPos.Map)
+			}
 		} else {
 			entry.RemoveComponent(component.MapActive)
+		}
+	})
+
+	// 不在当前地图的怪物移除
+	component.Enemy.Each(w, func(entry *donburi.Entry) {
+		p := component.Position.Get(entry)
+		if p.Map != playerPos.Map {
+			w.Remove(entry.Entity())
 		}
 	})
 

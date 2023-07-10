@@ -21,6 +21,7 @@ var GameMap = []donburi.IComponentType{
 	component.Sprite,
 	component.Map,
 	component.CollisionSpace,
+	component.EnemyMaxCount,
 }
 
 func NewGameMap(world donburi.World, parent *donburi.Entry) []*donburi.Entry {

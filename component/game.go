@@ -58,3 +58,13 @@ type TeleportData struct {
 }
 
 var Teleport = donburi.NewComponentType[TeleportData](TeleportData{})
+
+type EnemyMaxCountData struct {
+	Max int
+	Cur int
+}
+
+var EnemyMaxCount = donburi.NewComponentType[EnemyMaxCountData](EnemyMaxCountData{
+	Max: 1,
+	Cur: 0,
+})
