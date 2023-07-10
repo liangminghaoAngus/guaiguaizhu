@@ -1,11 +1,12 @@
 package system
 
 import (
+	"liangminghaoangus/guaiguaizhu/component"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/filter"
 	"github.com/yohamta/donburi/query"
-	"liangminghaoangus/guaiguaizhu/component"
 )
 
 type Animation struct {
@@ -16,7 +17,7 @@ func (a *Animation) Update(world donburi.World) {
 	a.query.Each(world, func(entry *donburi.Entry) {
 		animation := component.Animation.Get(entry)
 		if animation.OutOfBound() {
-			world.Remove(entry.Entity())
+			entry.RemoveComponent(component.Animation)
 		} else {
 			_ = animation.Update()
 		}
