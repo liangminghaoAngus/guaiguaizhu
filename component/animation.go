@@ -1,9 +1,11 @@
 package component
 
 import (
+	"image/color"
+	"math"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
-	"image/color"
 )
 
 type AnimationData struct {
@@ -16,11 +18,11 @@ type AnimationData struct {
 }
 
 func (d *AnimationData) OutOfBound() bool {
-	return d.screenIndex >= d.screen.Bounds().Dx()
+	return math.Abs(float64(d.screenIndex)) >= float64(d.screen.Bounds().Dx())
 }
 
 func (d *AnimationData) Update() error {
-	d.screenIndex++
+	d.screenIndex -= 100
 	return nil
 }
 
