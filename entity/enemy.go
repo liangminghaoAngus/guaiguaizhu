@@ -26,6 +26,7 @@ var EnemyEntity = []donburi.IComponentType{
 	transform.Transform,
 	component.Position,
 	component.Health,
+	component.Attack,
 	component.Level,
 	component.Intro,
 	component.Movement,
@@ -109,6 +110,9 @@ func NewEnemyEntity(w donburi.World, parent *donburi.Entry, enemyID int, num int
 		//	component.Collision,
 
 		transform.AppendChild(parent, entry, false)
+
+		InitEntryAttribute(entry)
+
 		entitys[ind] = entry
 	}
 

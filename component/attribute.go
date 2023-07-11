@@ -60,3 +60,9 @@ var defaultAttribute = AttributeData{
 }
 
 var Attribute = donburi.NewComponentType[AttributeData](defaultAttribute)
+
+type AttackData struct {
+	AttackNum int
+}
+
+var Attack = donburi.NewComponentType[AttackData](AttackData{})

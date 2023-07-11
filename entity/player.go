@@ -27,6 +27,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Attribute,
 	transform.Transform,
 	component.Health,
+	component.Attack,
 	component.Heal,
 	component.Race,
 	component.Level,
@@ -144,6 +145,8 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		Height: float64(armer.Bounds().Dy()),
 	})
 
+	InitEntryAttribute(player)
+
 	return player
 }
 
@@ -153,4 +156,22 @@ func MustFindPlayerEntry(w donburi.World) *donburi.Entry {
 		return entry
 	}
 	return nil
+}
+
+func InitEntryAttribute(entry *donburi.Entry) {
+	health := component.Health.Get(entry)
+	attack := component.Attack.Get(entry)
+	// todo armer data
+
+	if entry.HasComponent(component.Attribute) {
+		attribute := component.Attribute.Get(entry)
+		health.HPMax += attribute.Strength * 10
+		health.MPMax += attribute.Energy * 10
+		attack.AttackNum += attribute.Power * 2
+	}
+
+	if entry.HasComponent(component.WeaponHandler) {
+		weaponHand := component.WeaponHandler.Get(entry)
+		attack.AttackNum += weaponHand.Weapon.AttackNum
+	}
 }

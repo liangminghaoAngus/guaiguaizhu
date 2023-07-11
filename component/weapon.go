@@ -20,6 +20,9 @@ type WeaponHandlerData struct {
 }
 
 type WeaponData struct {
+	Level     int
+	AttackNum int
+
 	Image *ebiten.Image
 
 	Angle         float64
