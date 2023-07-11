@@ -3,6 +3,7 @@ package entity
 import (
 	"bytes"
 	"fmt"
+	"github.com/fishtailstudio/imgo"
 	"image"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
@@ -91,13 +92,10 @@ func NewEnemyEntity(w donburi.World, parent *donburi.Entry, enemyID int, num int
 		for _, item := range enemyPngFile {
 			raw, _ := assetImages.EnemyImageDir.ReadFile(fmt.Sprintf("enemy/%d/%s", enemyData.ID, item.Name()))
 			img, _, _ := image.Decode(bytes.NewReader(raw))
+			filpImg := imgo.LoadFromImage(img).Flip(imgo.Horizontal).ToImage()
 			r := ebiten.NewImageFromImage(img)
 			r1 = append(r1, r)
-			box := ebiten.NewImage(img.Bounds().Dx(), img.Bounds().Dy())
-			ops := &ebiten.DrawImageOptions{}
-			ops.GeoM.Scale(-1, 0)
-			ops.GeoM.Translate(0, 0)
-			box.DrawImage(r, ops)
+			box := ebiten.NewImageFromImage(filpImg)
 			l1 = append(l1, box)
 		}
 		component.SpriteStand.SetValue(entry, component.SpriteStandData{
