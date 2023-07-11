@@ -165,7 +165,9 @@ func InitEntryAttribute(entry *donburi.Entry) {
 
 	if entry.HasComponent(component.Attribute) {
 		attribute := component.Attribute.Get(entry)
+		health.HP += attribute.Strength * 10
 		health.HPMax += attribute.Strength * 10
+		health.MP += attribute.Energy * 10
 		health.MPMax += attribute.Energy * 10
 		attack.AttackNum += attribute.Power * 2
 	}
