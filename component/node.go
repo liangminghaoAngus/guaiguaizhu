@@ -23,6 +23,7 @@ type NodeItem struct {
 }
 
 type PlayerNodeData struct {
+	IsLeft    bool
 	Head      *NodeItem
 	Body      *NodeItem
 	Hand      *NodeItem
@@ -31,6 +32,29 @@ type PlayerNodeData struct {
 }
 
 var PlayerNode = donburi.NewComponentType[PlayerNodeData](PlayerNodeData{})
+
+func (p *PlayerNodeData) UpdateStand(frameCount int) {
+	// stand movement
+	animationStand := []math.Vec2{
+		{X: 0, Y: 0.2},
+		{X: 0, Y: 0.2},
+		{X: 0, Y: 0.15},
+		{X: 0, Y: 0.2},
+		{X: 0, Y: -0.15},
+		{X: 0, Y: -0.15},
+		{X: 0, Y: -0.15},
+		{X: 0, Y: -0.15},
+		{X: 0, Y: -0.15},
+	}
+	if frameCount > len(animationStand) || frameCount < 0 {
+		return
+	}
+	animationPoint := animationStand[frameCount]
+	// body head hand
+	p.Body.RenderPoint = p.Body.RenderPoint.Add(animationPoint)
+	p.Head.RenderPoint = p.Head.RenderPoint.Add(animationPoint)
+	p.Hand.RenderPoint = p.Head.RenderPoint.Add(animationPoint)
+}
 
 func (p *PlayerNodeData) Draw(screen *ebiten.Image) {
 	l := []*NodeItem{p.Head, p.Body, p.Head, p.LeftFoot, p.RightFoot}
@@ -48,7 +72,13 @@ func (p *PlayerNodeData) Draw(screen *ebiten.Image) {
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Scale((node.Width)/float64(node.ImageLeft.Bounds().Dx()), (node.Height)/float64(node.ImageLeft.Bounds().Dx()))
 		ops.GeoM.Translate(node.RenderPoint.X, node.RenderPoint.Y)
-		screen.DrawImage(node.ImageLeft, ops)
+		targetImage := &ebiten.Image{}
+		if p.IsLeft {
+			targetImage = node.ImageLeft
+		} else {
+			targetImage = node.ImageRight
+		}
+		screen.DrawImage(targetImage, ops)
 	}
 }
 
@@ -122,6 +152,7 @@ func NewPlayerNodeData() PlayerNodeData {
 	}
 
 	nodeData := PlayerNodeData{
+		IsLeft:    false,
 		Head:      headNode,
 		Body:      BodyNode,
 		Hand:      HandNode,

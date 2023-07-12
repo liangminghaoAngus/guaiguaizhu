@@ -215,6 +215,33 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(RenderImage, ops)
+
+		//if entry.HasComponent(component.SpriteStand){
+		//	standImages := component.SpriteStand.Get(entry)
+		//	if !standImages.Disabled {
+		//		index := (standImages.Count / 5) % len(standImages.Images)
+		//		// 判断是否需要翻转贴图方向
+		//		boxImage := ebiten.NewImage(box.Width, box.Height)
+		//		targetImage := &ebiten.Image{}
+		//		if standImages.IsDirectionRight {
+		//			targetImage = standImages.Images[index]
+		//		} else {
+		//			targetImage = standImages.ImagesRight[index]
+		//		}
+		//		ops := &ebiten.DrawImageOptions{}
+		//		scale := float64(boxImage.Bounds().Dx()) / float64(targetImage.Bounds().Dx())
+		//		ops.GeoM.Scale(scale, scale)
+		//		boxImage.DrawImage(targetImage, ops)
+		//		op := &ebiten.DrawImageOptions{}
+		//		op.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
+		//		screen.DrawImage(boxImage, op)
+		//	}
+		//}
+
+		//if entry.HasComponent(component.SpriteMovement) && entry.HasComponent(component.Position){
+		//
+		//}
+
 	})
 
 	playerEntity, ok := r.playerUI.First(w)
