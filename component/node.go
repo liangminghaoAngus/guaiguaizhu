@@ -34,7 +34,7 @@ type PlayerNodeData struct {
 var PlayerNode = donburi.NewComponentType[PlayerNodeData](PlayerNodeData{})
 
 func (p *PlayerNodeData) UpdateStand(frameCount int) {
-	// stand movement
+	// stand animation
 	animationStand := []math.Vec2{
 		{X: 0, Y: 0.2},
 		{X: 0, Y: 0.2},
@@ -54,6 +54,11 @@ func (p *PlayerNodeData) UpdateStand(frameCount int) {
 	p.Body.RenderPoint = p.Body.RenderPoint.Add(animationPoint)
 	p.Head.RenderPoint = p.Head.RenderPoint.Add(animationPoint)
 	p.Hand.RenderPoint = p.Head.RenderPoint.Add(animationPoint)
+}
+
+func (p *PlayerNodeData) UpdateMovement(frameCount int) {
+	// move animation
+
 }
 
 func (p *PlayerNodeData) Draw(screen *ebiten.Image) {
