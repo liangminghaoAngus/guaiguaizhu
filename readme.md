@@ -26,8 +26,8 @@
 - [ ] Enemy
 - [ ] Skill
 - [ ] SaveGame
+- [ ] Bone
 
 ### ToDo
-- [ ] Bone
 - [ ] Attack
 - [ ] KeyBinding

@@ -23,6 +23,7 @@ import (
 
 var PlayerEntity = []donburi.IComponentType{
 	component.Player,
+	component.PlayerNode,
 	component.Box,
 	component.Attribute,
 	transform.Transform,
@@ -47,6 +48,9 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		panic("unknow race")
 	}
 
+	playerEntity := w.Create(PlayerEntity...)
+	player := w.Entry(playerEntity)
+
 	playerPositionX, playerPositionY := 20, 20
 
 	playerLevel := 1
@@ -62,6 +66,7 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 		standImagesLeft = assetImages.HumanStandImgsLeft
 		movementLeftImages = assetImages.HumanMovementLeftImgs
 		movementRightImages = assetImages.HumanMovementRightImgs
+		component.PlayerNode.SetValue(player, component.NewPlayerNodeData())
 	case enums.RaceDevil:
 	}
 
@@ -69,9 +74,6 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	MPuiImage, _, _ := image.Decode(bytes.NewReader(assetImages.SystemMP))
 	hp := ebiten.NewImageFromImage(HPuiImage)
 	mp := ebiten.NewImageFromImage(MPuiImage)
-
-	playerEntity := w.Create(PlayerEntity...)
-	player := w.Entry(playerEntity)
 
 	component.Box.SetValue(player, component.NewPlayerBox(raceInt))
 	box := component.Box.Get(player)

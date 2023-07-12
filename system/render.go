@@ -19,9 +19,10 @@ import (
 )
 
 type Render struct {
-	query     *query.Query
-	playerUI  *query.Query
-	offscreen *ebiten.Image
+	query      *query.Query
+	modelQuery *query.Query
+	playerUI   *query.Query
+	offscreen  *ebiten.Image
 }
 
 // var implCount = 10
@@ -34,8 +35,9 @@ func NewRender() *Render {
 				filter.Contains(transform.Transform, component.Position),
 				filter.Or(filter.Contains(component.Sprite), filter.Contains(component.SpriteStand)),
 				filter.Not(filter.Contains(component.Map, component.NotActive)))),
-		playerUI:  query.NewQuery(filter.Contains(component.Health, component.Heal, component.Player, component.Level, component.Store)),
-		offscreen: ebiten.NewImage(3000, 3000),
+		modelQuery: query.NewQuery(filter.Contains(transform.Transform, component.Position, component.PlayerNode, component.Box)),
+		playerUI:   query.NewQuery(filter.Contains(component.Health, component.Heal, component.Player, component.Level, component.Store)),
+		offscreen:  ebiten.NewImage(3000, 3000),
 	}
 	return r
 }
@@ -199,6 +201,20 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 			}
 		}
 
+	})
+
+	r.modelQuery.Each(w, func(entry *donburi.Entry) {
+		box := component.Box.Get(entry)
+		pos := transform.WorldPosition(entry)
+		position := component.Position.Get(entry)
+		playerNode := component.PlayerNode.Get(entry)
+
+		RenderImage := ebiten.NewImage(box.Width, box.Height)
+		playerNode.Draw(RenderImage)
+		offsetX, offsetY := pos.X+position.X, pos.Y+position.Y
+		ops := &ebiten.DrawImageOptions{}
+		ops.GeoM.Translate(offsetX, offsetY)
+		screen.DrawImage(RenderImage, ops)
 	})
 
 	playerEntity, ok := r.playerUI.First(w)

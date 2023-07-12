@@ -105,6 +105,18 @@ var raceImageDir embed.FS
 //go:embed scene
 var sceneImageDir embed.FS
 
+//go:embed model/human/human_head.png
+var HumanHead []byte
+
+//go:embed model/human/human_body.png
+var HumanBody []byte
+
+//go:embed model/human/human_hand.png
+var HumanHand []byte
+
+//go:embed model/human/human_foot.png
+var HumanFoot []byte
+
 //go:embed human_stand
 var humanStandImageDir embed.FS
 var HumanStandImgs = make([]*ebiten.Image, 0)
