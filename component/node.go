@@ -8,6 +8,7 @@ import (
 	"github.com/yohamta/donburi/features/math"
 	"image"
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
+	"liangminghaoangus/guaiguaizhu/log"
 	"sort"
 )
 
@@ -58,6 +59,10 @@ func (p *PlayerNodeData) UpdateStand(frameCount int) {
 
 func (p *PlayerNodeData) UpdateMovement(frameCount int) {
 	// move animation
+	// hand move angle
+	handAngle := []float64{-9.816, -20.02, -30, -20, -10, 0, 19.83, 40.07, 60, 40, 19.8, 0}
+	log.Info("%s", handAngle)
+	p.Hand.RenderPoint.Rotate(handAngle[frameCount])
 
 }
 
