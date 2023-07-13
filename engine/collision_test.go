@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -23,9 +22,9 @@ func TestNewObject(t *testing.T) {
 
 	//dx := float64(500)
 	if c := object.Check(800, 300); c != nil {
-		fmt.Println(c)
+		// collision
 	} else {
-		fmt.Println("no collision")
+		// no collision
 	}
 
 	return

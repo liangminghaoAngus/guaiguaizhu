@@ -29,9 +29,10 @@
 - [ ] Skill
 - [ ] SaveGame
 - [ ] Bone
-
+- [ ] NpcDialog
+- [ ] Data
+- [ ] LogSystem
 
 ### ToDo
 - [ ] Attack
 - [ ] KeyBinding
-- [ ] NpcDialog

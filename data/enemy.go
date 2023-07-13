@@ -2,8 +2,8 @@ package data
 
 import (
 	"encoding/json"
-	"fmt"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"liangminghaoangus/guaiguaizhu/log"
 )
 
 type Enemy struct {
@@ -61,7 +61,7 @@ func (e *Enemy) TransLate2EnemyItem() *EnemyItem {
 		if err := json.Unmarshal([]byte(e.Health), &h); err == nil {
 			tmp.Health = h
 		} else {
-			fmt.Println(err)
+			log.Error("%s", err.Error())
 		}
 
 	}
@@ -71,7 +71,7 @@ func (e *Enemy) TransLate2EnemyItem() *EnemyItem {
 		if err := json.Unmarshal([]byte(e.Box), &h); err == nil {
 			tmp.Box = h
 		} else {
-			fmt.Println(err)
+			log.Error("%s", err.Error())
 		}
 
 	}
@@ -85,7 +85,7 @@ func (e *Enemy) TableName() string {
 func GetEnemyByID(id int) *Enemy {
 	res := Enemy{}
 	if err := getDb().Model(Enemy{}).Where("id = ?", id).First(&res).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return &res
 }
@@ -93,7 +93,7 @@ func GetEnemyByID(id int) *Enemy {
 func GetEnemyByMap(mapInt enums.Map) []*Enemy {
 	res := make([]*Enemy, 0)
 	if err := getDb().Model(Enemy{}).Where("map = ?", mapInt).Find(&res).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return res
 }

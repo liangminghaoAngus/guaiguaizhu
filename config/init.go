@@ -44,6 +44,9 @@ type Config struct {
 	MusicVolume int  `json:"music_volume"`
 	AutoHealHP  bool `json:"auto_heal_hp"`
 	AutoHealMP  bool `json:"auto_heal_mp"`
+
+	//
+	LogLevel int `json:"log_level"`
 }
 
 func Init(fileName string) {

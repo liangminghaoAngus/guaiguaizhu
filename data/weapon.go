@@ -1,7 +1,7 @@
 package data
 
 import (
-	"fmt"
+	"liangminghaoangus/guaiguaizhu/log"
 	"time"
 )
 
@@ -20,7 +20,7 @@ func (w *Weapon) TableName() string {
 func GetWeaponByID(id int) *Weapon {
 	r := Weapon{}
 	if err := getDb().Model(Weapon{}).Where("id = ?", id).First(&r).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return &r
 }

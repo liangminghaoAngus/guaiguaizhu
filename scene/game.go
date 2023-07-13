@@ -3,7 +3,6 @@ package scene
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"image"
 	"io"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
@@ -13,6 +12,7 @@ import (
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/entity"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"liangminghaoangus/guaiguaizhu/log"
 	"liangminghaoangus/guaiguaizhu/system"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -128,83 +128,7 @@ func (g *Game) Update() {
 
 	// save game
 	if inpututil.IsKeyJustPressed(gameData.SaveGameKey[0]) && inpututil.IsKeyJustPressed(gameData.SaveGameKey[1]) {
-		saveMap := make(map[string]string)
-		if t, err := marshalComponentData(component.Player.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["player"] = t
-		}
-
-		if t, err := marshalComponentData(component.Attribute.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["attribute"] = t
-		}
-
-		if t, err := marshalComponentData(transform.Transform.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["transform"] = t
-		}
-
-		if t, err := marshalComponentData(component.Health.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["health"] = t
-		}
-
-		if t, err := marshalComponentData(component.Race.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["race"] = t
-		}
-
-		if t, err := marshalComponentData(component.Level.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["level"] = t
-		}
-
-		if t, err := marshalComponentData(component.Ability.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["ability"] = t
-		}
-
-		if t, err := marshalComponentData(component.Movement.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["movement"] = t
-		}
-
-		if t, err := marshalComponentData(component.Position.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["position"] = t
-		}
-
-		if t, err := marshalComponentData(component.Store.Get(playForSave)); err != nil {
-			fmt.Printf("save data err:%+v\n", err)
-		} else {
-			saveMap["store"] = t
-		}
-		saveMapRaw, _ := json.Marshal(saveMap)
-
-		var err error
-		// todo 暂时不做额外存档处理
-		if component.IsNewGame(*gameData) {
-			id, err := data.SavePlayerData2Local(string(saveMapRaw))
-			if err == nil {
-				gameData.SaveGameID = id
-			}
-		} else {
-			err = data.SaveGameChangeOrigin(gameData.SaveGameID, string(saveMapRaw))
-		}
-
-		if err != nil {
-			fmt.Printf("save game db err :%+v\n", err)
-		}
-
+		SaveGame(playForSave, gameData)
 	}
 
 	if gameData.Pause {
@@ -261,5 +185,84 @@ func ChangeMusic(screen string) *component.SoundData {
 		AudioPlayer:  p,
 		//Mp3Byte:      mp3Byte,
 		Volume: 10,
+	}
+}
+
+func SaveGame(playForSave *donburi.Entry, gameData *component.GameData) {
+	saveMap := make(map[string]string)
+	if t, err := marshalComponentData(component.Player.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["player"] = t
+	}
+
+	if t, err := marshalComponentData(component.Attribute.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["attribute"] = t
+	}
+
+	if t, err := marshalComponentData(transform.Transform.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["transform"] = t
+	}
+
+	if t, err := marshalComponentData(component.Health.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["health"] = t
+	}
+
+	if t, err := marshalComponentData(component.Race.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["race"] = t
+	}
+
+	if t, err := marshalComponentData(component.Level.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["level"] = t
+	}
+
+	if t, err := marshalComponentData(component.Ability.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["ability"] = t
+	}
+
+	if t, err := marshalComponentData(component.Movement.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["movement"] = t
+	}
+
+	if t, err := marshalComponentData(component.Position.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["position"] = t
+	}
+
+	if t, err := marshalComponentData(component.Store.Get(playForSave)); err != nil {
+		log.Error("save data err:%+v", err)
+	} else {
+		saveMap["store"] = t
+	}
+	saveMapRaw, _ := json.Marshal(saveMap)
+
+	var err error
+	// todo 暂时不做额外存档处理
+	if component.IsNewGame(*gameData) {
+		id, err := data.SavePlayerData2Local(string(saveMapRaw))
+		if err == nil {
+			gameData.SaveGameID = id
+		}
+	} else {
+		err = data.SaveGameChangeOrigin(gameData.SaveGameID, string(saveMapRaw))
+	}
+
+	if err != nil {
+		log.Error("save game db err :%+v", err)
 	}
 }

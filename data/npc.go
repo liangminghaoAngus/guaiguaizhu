@@ -1,6 +1,8 @@
 package data
 
-import "fmt"
+import (
+	"liangminghaoangus/guaiguaizhu/log"
+)
 
 type Npc struct {
 	ID       int    `json:"id" gorm:"column:id;"`
@@ -26,7 +28,7 @@ func GetNpc(id int) *Npc {
 func GetNpcByID(ids []int) []Npc {
 	r := make([]Npc, 0)
 	if err := getDb().Model(Npc{}).Where("id in ?", ids).Find(&r).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return r
 }
@@ -34,7 +36,7 @@ func GetNpcByID(ids []int) []Npc {
 func GetNpcByMapID(mapID int) []int {
 	r := make([]int, 0)
 	if err := getDb().Model(Npc{}).Where("map = ?", mapID).Select("id").Find(&r).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return r
 }

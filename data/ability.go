@@ -1,8 +1,8 @@
 package data
 
 import (
-	"fmt"
 	"liangminghaoangus/guaiguaizhu/enums"
+	"liangminghaoangus/guaiguaizhu/log"
 )
 
 type Ability struct {
@@ -22,7 +22,7 @@ func (a *Ability) TableName() string {
 func ListAbilityByRace(raceInt enums.Race) []Ability {
 	res := make([]Ability, 0)
 	if err := getDb().Model(Ability{}).Where("race = ?", raceInt).Order("need_level").Find(&res).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return res
 }

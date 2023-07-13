@@ -4,7 +4,7 @@ import (
 	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/data"
-	"log"
+	"liangminghaoangus/guaiguaizhu/log"
 	"math/rand"
 	"time"
 
@@ -17,6 +17,7 @@ func main() {
 	data.Init()
 	assetsImage.Init()
 	gconf := config.GetConfig()
+	log.Init()
 	ebiten.SetWindowSize(gconf.ScreenWidth, gconf.ScreenHeight)
 	//ebiten.SetWindowIcon()
 	ebiten.SetWindowTitle(gconf.GameName)
@@ -24,6 +25,6 @@ func main() {
 
 	err := ebiten.RunGame(NewGame(gconf.ScreenWidth, gconf.ScreenHeight))
 	if err != nil {
-		log.Fatal(err)
+		log.Error("%s", err.Error())
 	}
 }

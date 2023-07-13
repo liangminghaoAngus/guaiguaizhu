@@ -94,7 +94,6 @@ func (m *Control) Update(w donburi.World) {
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 				store.SetSelect(math.NewVec2(float64(x), float64(y)))
 			} else if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-				// fmt.Println("release")
 				if store.DragItem != nil {
 					cur := math.NewVec2(float64(x)-store.RenderPoint.X, float64(y)-store.RenderPoint.Y)
 					curGrid, ind := store.GetItem(cur.X, cur.Y)

@@ -1,6 +1,8 @@
 package data
 
-import "fmt"
+import (
+	"liangminghaoangus/guaiguaizhu/log"
+)
 
 type Teleport struct {
 	ID       int    `json:"id" gorm:"column:id;"`
@@ -20,7 +22,7 @@ func (t *Teleport) TableName() string {
 func ListAllTeleports() []*Teleport {
 	l := make([]*Teleport, 0)
 	if err := getDb().Model(Teleport{}).Find(&l).Error; err != nil {
-		fmt.Println(err)
+		log.Error("%s", err.Error())
 	}
 	return l
 }
