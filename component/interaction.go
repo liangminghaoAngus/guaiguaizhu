@@ -5,8 +5,29 @@ import (
 	"github.com/yohamta/donburi"
 )
 
+type InteractionFunc int
+
+const (
+	InteractionFuncTalk InteractionFunc = iota + 1
+	InteractionFuncBuy
+	InteractionFuncWeaponLevel
+	InteractionFuncTeleport
+)
+
 type InteractionData struct {
-	Rect *ebiten.Image
+	IsOpen      bool
+	DialogCache *ebiten.Image
+
+	Items    []InteractionFunc
+	Rect     *ebiten.Image
+	TalkWord *string
+	Buy      []*StoreItem
+	Teleport []*PositionData
+	// todo weapon level
+}
+
+func (i *InteractionData) ShowDialog() {
+
 }
 
 var Interaction = donburi.NewComponentType[InteractionData](InteractionData{})
