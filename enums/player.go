@@ -8,6 +8,19 @@ const (
 	RaceDevil
 )
 
+func GetRaceStr(raceInt Race) string {
+	res := ""
+	switch raceInt {
+	case RaceGod:
+		res = "god"
+	case RaceHuman:
+		res = "human"
+	case RaceDevil:
+		res = "devil"
+	}
+	return res
+}
+
 func GetRaceName(raceInt Race) string {
 	res := ""
 	switch raceInt {

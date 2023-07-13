@@ -12,6 +12,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//go:embed skill
+var SkillImageDir embed.FS
+
 //go:embed enemy
 var EnemyImageDir embed.FS
 

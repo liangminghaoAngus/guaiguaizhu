@@ -1,7 +1,11 @@
 package component
 
 import (
+	"bytes"
+	"fmt"
+	"image"
 	"image/color"
+	assetsImage "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/enums"
 	"sort"
@@ -46,7 +50,7 @@ func (s *AbilityData) ListOrderByLevel() []SkillItem {
 }
 
 func (s *AbilityData) DrawAbilityList(level int) *ebiten.Image {
-	itemCeil := 60
+	itemCeil := 30
 	margin := 10
 	l := s.ListOrderByLevel()
 	lineImg := ebiten.NewImage(len(l)*itemCeil+(len(l)+1)*margin, itemCeil+2*margin)
@@ -71,11 +75,19 @@ func (s *AbilityData) DrawAbilityList(level int) *ebiten.Image {
 func NewAbility(raceInt enums.Race) AbilityData {
 	m := make(map[int]SkillItem)
 	l := data.ListAbilityByRace(raceInt)
+	raceName := enums.GetRaceStr(raceInt)
 	for _, val := range l {
-		testImg := ebiten.NewImage(60, 60)
-		testImg.Fill(color.Black)
+		width, height := 30, 30
+		imgBox := ebiten.NewImage(width, height)
+		imgBox.Fill(color.Black)
+		raw, _ := assetsImage.SkillImageDir.ReadFile(fmt.Sprintf("skill/%s/%d.png", raceName, val.ID))
+		i, _, _ := image.Decode(bytes.NewReader(raw))
+		scale := float64(width) / float64(i.Bounds().Dx())
+		ops := &ebiten.DrawImageOptions{}
+		ops.GeoM.Scale(scale, scale)
+		imgBox.DrawImage(ebiten.NewImageFromImage(i), ops)
 		m[val.ID] = SkillItem{
-			Image:     testImg,
+			Image:     imgBox,
 			Type:      0,
 			CoolDown:  0,
 			Name:      val.Name,
