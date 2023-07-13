@@ -57,6 +57,7 @@ func (g *Game) initGame(raceInt enums.Race) {
 		system.NewHeath(),
 		mapRender,
 		animateScene,
+		system.NewBaseGround(),
 	}
 
 	g.drawables = []Drawable{

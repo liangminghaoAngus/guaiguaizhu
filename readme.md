@@ -19,6 +19,8 @@
 - [x] Heal
 - [x] Level
 - [x] AnimateScene
+- [x] BaseGround
+- [x] BaseY-Velocity
 
 ### Doing
 - [ ] Bag
@@ -28,6 +30,8 @@
 - [ ] SaveGame
 - [ ] Bone
 
+
 ### ToDo
 - [ ] Attack
 - [ ] KeyBinding
+- [ ] NpcDialog
