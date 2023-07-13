@@ -3,9 +3,11 @@ package log
 import (
 	"github.com/robfig/cron/v3"
 	"io"
+	"io/fs"
 	"liangminghaoangus/guaiguaizhu/config"
 	"log"
 	"os"
+	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -17,7 +19,7 @@ var (
 	debug         *log.Logger
 	info          *log.Logger
 	warn          *log.Logger
-	error         *log.Logger
+	errorLog      *log.Logger
 	dayChangeLock sync.RWMutex
 )
 
@@ -33,8 +35,12 @@ func createLogFile() {
 	defer dayChangeLock.Unlock()
 	now := time.Now()
 	postFix := now.Format("2006-01-02")
-	logFile := "plume_log_" + postFix + ".log"
-	logOut, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+	logFile := postFix + ".log"
+	logFilePath := path.Join("log/files", logFile)
+	if _, err := os.Stat("log/files"); err != nil && !os.IsExist(err) {
+		err = os.MkdirAll("log/files", fs.ModePerm)
+	}
+	logOut, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
 	if err != nil {
 		panic(err)
 	} else {
@@ -42,7 +48,7 @@ func createLogFile() {
 		debug = log.New(multiWriter, "[DEBUG] ", log.Ldate|log.Ltime)
 		info = log.New(multiWriter, "[INFO] ", log.Ldate|log.Ltime)
 		warn = log.New(multiWriter, "[WARN] ", log.Ldate|log.Ltime)
-		error = log.New(multiWriter, "[ERROR] ", log.Ldate|log.Ltime)
+		errorLog = log.New(multiWriter, "[ERROR] ", log.Ldate|log.Ltime)
 	}
 }
 
@@ -66,7 +72,7 @@ func Warn(format string, v ...any) {
 
 func Error(format string, v ...any) {
 	if config.GetConfig().LogLevel <= errorLevel {
-		error.Printf(getLineNo()+format, v...)
+		errorLog.Printf(getLineNo()+format, v...)
 	}
 }
 
