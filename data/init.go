@@ -20,14 +20,16 @@ func Init() {
 	}
 
 	tableList := map[string]interface{}{
-		"ability":    Ability{},
-		"npc":        Npc{},
-		"save_game":  SaveGame{},
-		"item":       Item{},
-		"store_item": StoreItem{},
-		"teleport":   Teleport{},
-		"weapon":     Weapon{},
-		"enemy":      Enemy{},
+		"ability":     Ability{},
+		"npc":         Npc{},
+		"save_game":   SaveGame{},
+		"item":        Item{},
+		"store_item":  StoreItem{},
+		"teleport":    Teleport{},
+		"weapon":      Weapon{},
+		"enemy":       Enemy{},
+		"player_task": PlayerTask{},
+		"task":        Task{},
 	}
 	for table, structTable := range tableList {
 		if !db.Migrator().HasTable(table) {
