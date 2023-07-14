@@ -12,12 +12,14 @@ import (
 )
 
 type GameData struct {
-	Pause             bool
-	PauseKey          ebiten.Key
-	SaveGameID        int
-	SaveGameKey       [2]ebiten.Key
-	SystemUI          *ebiten.Image
-	IsPlayerStoreOpen bool
+	Pause                     bool
+	PauseKey                  ebiten.Key
+	SaveGameID                int
+	SaveGameKey               [2]ebiten.Key
+	SystemUI                  *ebiten.Image
+	IsPlayerStoreOpen         bool
+	IsPlayerAttributeOpen     bool
+	IsPlayerSystemSettingOpen bool
 
 	ConfigData *config.Config
 }

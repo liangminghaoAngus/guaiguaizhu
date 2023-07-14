@@ -57,6 +57,27 @@ func (p *PlayerNodeData) UpdateStand(frameCount int) {
 	p.Hand.RenderPoint = p.Head.RenderPoint.Add(animationPoint)
 }
 
+type MoveRenderPoint struct {
+	Head, Body, Hand, LeftFoot, RightFoot struct {
+		Angle float64
+		Point *math.Vec2
+	}
+}
+
+func (p *PlayerNodeData) GetMoveRenderPoint(frameCount int) MoveRenderPoint {
+	handAngle := []float64{-9.816, -20.02, -30, -20, -10, 0, 19.83, 40.07, 60, 40, 19.8, 0}
+	res := MoveRenderPoint{}
+	if p.Hand != nil {
+		i := p.Hand.RenderPoint.Rotate(handAngle[frameCount])
+		res.Hand = struct {
+			Angle float64
+			Point *math.Vec2
+		}{Angle: handAngle[frameCount], Point: &i}
+	}
+
+	return res
+}
+
 func (p *PlayerNodeData) UpdateMovement(frameCount int) {
 	// move animation
 	// hand move angle
@@ -66,7 +87,7 @@ func (p *PlayerNodeData) UpdateMovement(frameCount int) {
 
 }
 
-func (p *PlayerNodeData) Draw(screen *ebiten.Image) {
+func (p *PlayerNodeData) Draw(screen *ebiten.Image, frameCount int) {
 	l := []*NodeItem{p.Head, p.Body, p.Head, p.LeftFoot, p.RightFoot}
 	// 删除不存在的节点
 	for i := 0; i < len(l); i++ {
@@ -79,6 +100,7 @@ func (p *PlayerNodeData) Draw(screen *ebiten.Image) {
 		return l[i].ZIndex < l[j].ZIndex
 	})
 	for _, node := range l {
+		//reflect.TypeOf(node)
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Scale((node.Width)/float64(node.ImageLeft.Bounds().Dx()), (node.Height)/float64(node.ImageLeft.Bounds().Dx()))
 		ops.GeoM.Translate(node.RenderPoint.X, node.RenderPoint.Y)
