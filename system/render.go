@@ -157,26 +157,6 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		}
 
 		// 武器绘制
-		if entry.HasComponent(component.WeaponHandler) && entry.HasComponent(component.Box) {
-			weaponHand := component.WeaponHandler.Get(entry)
-			// box := component.Box.Get(entry)
-			boxImage := ebiten.NewImage(200, 200)
-			drawX, drawY := weaponHand.GetRenderPoint().X, weaponHand.GetRenderPoint().Y
-			ops := &ebiten.DrawImageOptions{}
-			ops.GeoM.Rotate(weaponHand.Angle)
-			ops.GeoM.Translate(drawX, drawY)
-			boxImage.DrawImage(weaponHand.Image, ops)
-			boxOps := &ebiten.DrawImageOptions{}
-			boxOps.GeoM.Translate(position.X+pos.X, position.Y+pos.Y)
-			if weaponHand.Weapon != nil {
-				weaponBox := ebiten.NewImage(int(weaponHand.Weapon.Width), int(weaponHand.Weapon.Height))
-				weaponBox.DrawImage(weaponHand.Weapon.Image, nil)
-				ops := &ebiten.DrawImageOptions{}
-				ops.GeoM.Translate(drawX+weaponHand.WeaponPoint.X, drawY+weaponHand.WeaponPoint.Y)
-				boxImage.DrawImage(weaponBox, ops)
-			}
-			screen.DrawImage(boxImage, boxOps)
-		}
 
 		if entry.HasComponent(component.SpriteStand) && entry.HasComponent(component.Position) && entry.HasComponent(component.Box) {
 			standImages := component.SpriteStand.Get(entry)
@@ -207,10 +187,10 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		box := component.Box.Get(entry)
 		pos := transform.WorldPosition(entry)
 		position := component.Position.Get(entry)
-		playerNode := component.PlayerNode.Get(entry)
+		//playerNode := component.PlayerNode.Get(entry)
 
 		RenderImage := ebiten.NewImage(box.Width, box.Height)
-		playerNode.Draw(RenderImage)
+		//playerNode.Draw(RenderImage)
 		offsetX, offsetY := pos.X+position.X, pos.Y+position.Y
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Translate(offsetX, offsetY)

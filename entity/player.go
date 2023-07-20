@@ -2,12 +2,10 @@ package entity
 
 import (
 	"bytes"
-	"fmt"
 	"image"
 	"image/color"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
 	"liangminghaoangus/guaiguaizhu/component"
-	"liangminghaoangus/guaiguaizhu/data"
 	"liangminghaoangus/guaiguaizhu/engine"
 	"liangminghaoangus/guaiguaizhu/enums"
 
@@ -17,7 +15,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 )
 
@@ -40,7 +37,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Control,
 	component.Collision,
 	component.Store,
-	component.WeaponHandler,
+	//component.WeaponHandler,
 }
 
 func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
@@ -130,22 +127,9 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	armer.DrawImage(hImg, ops)
 
 	// todo test weapon
-	weaponData := data.GetWeaponByID(1)
-	wi, _ := assetImages.WeaponDir.ReadFile(fmt.Sprintf("weapon/%s", weaponData.Image))
-	weaponImg, _, _ := image.Decode(bytes.NewReader(wi))
-
-	component.WeaponHandler.SetValue(player, component.WeaponHandlerData{
-		Image:       armer,
-		WeaponPoint: math.NewVec2(20, 20),
-		Weapon: &component.WeaponData{
-			Image:  ebiten.NewImageFromImage(weaponImg),
-			Width:  80,
-			Height: 33,
-		},
-		Point:  math.NewVec2(20, 34),
-		Width:  float64(armer.Bounds().Dx()),
-		Height: float64(armer.Bounds().Dy()),
-	})
+	//weaponData := data.GetWeaponByID(1)
+	//wi, _ := assetImages.WeaponDir.ReadFile(fmt.Sprintf("weapon/%s", weaponData.Image))
+	//weaponImg, _, _ := image.Decode(bytes.NewReader(wi))
 
 	InitEntryAttribute(player)
 
@@ -174,8 +158,8 @@ func InitEntryAttribute(entry *donburi.Entry) {
 		attack.AttackNum += attribute.Power * 2
 	}
 
-	if entry.HasComponent(component.WeaponHandler) {
-		weaponHand := component.WeaponHandler.Get(entry)
-		attack.AttackNum += weaponHand.Weapon.AttackNum
-	}
+	//if entry.HasComponent(component.WeaponHandler) {
+	//	weaponHand := component.WeaponHandler.Get(entry)
+	//	attack.AttackNum += weaponHand.Weapon.AttackNum
+	//}
 }
