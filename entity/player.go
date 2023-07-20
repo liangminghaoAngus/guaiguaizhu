@@ -2,6 +2,7 @@ package entity
 
 import (
 	"bytes"
+	"github.com/yohamta/donburi/features/math"
 	"image"
 	"image/color"
 	assetImages "liangminghaoangus/guaiguaizhu/assets/images"
@@ -37,6 +38,7 @@ var PlayerEntity = []donburi.IComponentType{
 	component.Control,
 	component.Collision,
 	component.Store,
+	component.Weapon,
 	//component.WeaponHandler,
 }
 
@@ -127,9 +129,10 @@ func NewPlayer(w donburi.World, raceInt enums.Race) *donburi.Entry {
 	armer.DrawImage(hImg, ops)
 
 	// todo test weapon
-	//weaponData := data.GetWeaponByID(1)
+	weaponData := component.NewWeapon(1, math.Vec2{X: 20, Y: 20})
 	//wi, _ := assetImages.WeaponDir.ReadFile(fmt.Sprintf("weapon/%s", weaponData.Image))
 	//weaponImg, _, _ := image.Decode(bytes.NewReader(wi))
+	component.Weapon.SetValue(player, weaponData)
 
 	InitEntryAttribute(player)
 

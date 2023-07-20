@@ -17,10 +17,6 @@ import (
 	"github.com/yohamta/donburi/features/transform"
 )
 
-//type Teleport struct {
-//
-//}
-
 var Teleport = []donburi.IComponentType{
 	component.Teleport,
 	component.Intro, // just for information
