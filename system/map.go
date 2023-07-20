@@ -2,7 +2,10 @@ package system
 
 import (
 	"fmt"
+	"github.com/hajimehoshi/ebiten/v2/text"
+	"image/color"
 	"liangminghaoangus/guaiguaizhu/component"
+	"liangminghaoangus/guaiguaizhu/config"
 	"liangminghaoangus/guaiguaizhu/entity"
 	"math"
 	"strconv"
@@ -111,6 +114,7 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 		return
 	}
 	mapData := component.Sprite.Get(entry)
+	mapInfo := component.Intro.Get(entry)
 	img := mapData.Image.Bounds().Size()
 	scr := screen.Bounds().Size()
 	op := &ebiten.DrawImageOptions{}
@@ -118,6 +122,12 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 	op.GeoM.Scale(scX, scY)
 
 	screen.DrawImage(mapData.Image, op)
+
+	// 绘制地图名称
+	fontSize := config.GetSystemFont()
+	nameText := fmt.Sprintf("当前地图:%s", mapInfo.Name)
+	nameTextBound := text.BoundString(fontSize, nameText)
+	text.Draw(screen, nameText, config.GetSystemFont(), 0, screen.Bounds().Dy()-nameTextBound.Bounds().Dy(), color.White)
 
 	//m.query.Each(w, func(entry *donburi.Entry) {
 	//	// entries = append(entries, entry)
