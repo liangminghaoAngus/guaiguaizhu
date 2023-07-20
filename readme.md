@@ -21,6 +21,7 @@
 - [x] AnimateScene
 - [x] BaseGround
 - [x] BaseY-Velocity
+- [x] LogSystem
 
 ### Doing
 - [ ] Bag
@@ -31,7 +32,7 @@
 - [ ] Bone
 - [ ] NpcDialog
 - [ ] Data
-- [ ] LogSystem
+- [ ] Task
 
 ### ToDo
 - [ ] Attack
