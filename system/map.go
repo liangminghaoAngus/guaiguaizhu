@@ -124,7 +124,7 @@ func (m *Map) Draw(w donburi.World, screen *ebiten.Image) {
 	screen.DrawImage(mapData.Image, op)
 
 	// 绘制地图名称
-	fontSize := config.GetSystemFont()
+	fontSize := config.GetSystemFontSize(12)
 	nameText := fmt.Sprintf("当前地图:%s", mapInfo.Name)
 	nameTextBound := text.BoundString(fontSize, nameText)
 	text.Draw(screen, nameText, config.GetSystemFont(), 0, screen.Bounds().Dy()-nameTextBound.Bounds().Dy(), color.White)

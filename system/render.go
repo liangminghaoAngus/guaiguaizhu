@@ -108,14 +108,14 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		}
 
 		// debug box
-		if entry.HasComponent(component.Box) && entry.HasComponent(component.Position) {
-			box := component.Box.Get(entry)
-			debugBounds := ebiten.NewImage(int(box.Width), int(box.Height))
-			debugBounds.Fill(color.Black)
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
-			screen.DrawImage(debugBounds, op)
-		}
+		//if entry.HasComponent(component.Box) && entry.HasComponent(component.Position) {
+		//	box := component.Box.Get(entry)
+		//	debugBounds := ebiten.NewImage(int(box.Width), int(box.Height))
+		//	debugBounds.Fill(color.Black)
+		//	op := &ebiten.DrawImageOptions{}
+		//	op.GeoM.Translate(pos.X+position.X, pos.Y+position.Y)
+		//	screen.DrawImage(debugBounds, op)
+		//}
 
 		// debug collision
 		if entry.HasComponent(component.Collision) && entry.HasComponent(component.Position) {
