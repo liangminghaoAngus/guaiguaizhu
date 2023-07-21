@@ -102,7 +102,7 @@ func (p *PlayerNodeData) Draw(screen *ebiten.Image, frameCount int) {
 	for _, node := range l {
 		//reflect.TypeOf(node)
 		ops := &ebiten.DrawImageOptions{}
-		ops.GeoM.Scale((node.Width)/float64(node.ImageLeft.Bounds().Dx()), (node.Height)/float64(node.ImageLeft.Bounds().Dx()))
+		ops.GeoM.Scale((node.Width)/float64(node.ImageLeft.Bounds().Dx()), (node.Height)/float64(node.ImageLeft.Bounds().Dy()))
 		ops.GeoM.Translate(node.RenderPoint.X, node.RenderPoint.Y)
 		targetImage := &ebiten.Image{}
 		if p.IsLeft {

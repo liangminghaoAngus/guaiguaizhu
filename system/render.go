@@ -187,10 +187,12 @@ func (r *Render) Draw(w donburi.World, screen *ebiten.Image) {
 		box := component.Box.Get(entry)
 		pos := transform.WorldPosition(entry)
 		position := component.Position.Get(entry)
-		//playerNode := component.PlayerNode.Get(entry)
+		playerNode := component.PlayerNode.Get(entry)
 
 		RenderImage := ebiten.NewImage(box.Width, box.Height)
-		//playerNode.Draw(RenderImage)
+		RenderImage.Fill(color.Black)
+		//index := (movementImages.Count / 5) % 8
+		playerNode.Draw(RenderImage, 0)
 		offsetX, offsetY := pos.X+position.X, pos.Y+position.Y
 		ops := &ebiten.DrawImageOptions{}
 		ops.GeoM.Translate(offsetX, offsetY)
